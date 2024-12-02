@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AddEntryAgendaControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "toDoList:\nToDoList" as toDoList
+
+autonumber 12
+
+ -> CTRL : getTaskByIndex(index)
+autonumber 12.1
+activate CTRL
+    group Get Task Object
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getToDoList()
+            activate REPS
+
+            REPS --> CTRL: toDoList
+            deactivate REPS
+
+            CTRL -> toDoList: getTaskByIndex(index)
+            activate toDoList
+
+            toDoList --> CTRL: task
+            deactivate toDoList
+
+    end
+    autonumber 13
+    <-- CTRL  : task
+deactivate CTRL
+
+@enduml

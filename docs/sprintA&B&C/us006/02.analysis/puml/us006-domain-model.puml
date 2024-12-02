@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US006
+
+class Organization {
+}
+
+class Vehicle {
+    brand
+    model
+    tare
+    grossWeight
+    currentKm
+    registerDate
+    acquisitionDate
+    maintenanceCheckUpFrequency
+    plateNumber
+}
+
+class FleetManager {
+    name
+}
+
+class VehicleType {
+    typeTransport
+    packageWeight
+    transport
+}
+
+Organization "1" -- "1..*" FleetManager : has >
+Organization "1" -- "1..*" Vehicle : has >
+FleetManager "1" -- "1..*" Vehicle : register >
+Vehicle "0..*" -- "1" VehicleType : cataloged as >
+
+@enduml

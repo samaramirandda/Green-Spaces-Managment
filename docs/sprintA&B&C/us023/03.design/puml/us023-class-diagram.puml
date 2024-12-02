@@ -1,0 +1,137 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class AssignTeamUI {
+}
+
+class AssignTeamController {
+    +AssignTeamController(agenda, toDoList, authenticationRepository)
+    +assignTeamToEntry(agendaIndex, teamIndex)
+    -getEntryByIndex(agendaIndex)
+    -getTeamByIndex(teamIndex)
+    +getEntriesListDTO()
+    +getTeamsListDTO()
+    -sendTheEmailToTeam(from, to, nameCollaborator, entry)
+    -getGSMFromSession()
+}
+
+class Agenda {
+    +getEntryByIndex(agendaIndex)
+}
+
+class Entry {
+    -Date startingDate
+    -AgendaStatus status
+    -Task task
+    -GreenSpacesManager greenSpacesManager;
+    -List<Vehicle> vehiclesAssign;
+    +Entry(startingDate, task)
+    +assignTeam(teamAssign)
+}
+
+class TeamRepository {
+    +getTeamByIndex(teamIndex)
+}
+
+class Team {
+    -List<Collaborator> collaborators
+    Team(collaborators)
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getAgenda()
+    + getTeamRepository()
+    + getAuthenticationRepository()
+}
+
+class AuthenticationRepository {
+    +getCurrentUserSession()
+}
+
+class UserSession {
+    +getUserId()
+}
+
+class EmailService {
+    +sendToEmailFile(from, to, nameCollaborator, entry)
+}
+
+class ApplicationSession {
+    -getEmail()
+    +getEmailService()
+}
+
+interface Email {
+    +sendEmail(from, to, subject, body)
+}
+
+class DeiService {
+    +sendEmail(from, to, subject, body)
+    -writeToFile(file, from, to, subject, body)
+}
+
+class GmailService {
+    +sendEmail(from, to, subject, body)
+    -writeToFile(file, from, to, subject, body)
+}
+
+class EntryDto {
+    -Date startingDate
+    -AgendaStatus status
+    -Task task
+    -Team teamAssign;
+    -GreenSpacesManager greenSpacesManager;
+    -List<Vehicle> vehiclesAssign;
+    +EntryDto(startingDate, status, task, teamAssign, greenSpacesManager, vehiclesAssign)
+}
+
+class EntryMapper {
+    +toDTOList(entriesList)
+    +entryToDTO(entry)
+}
+
+class TeamDto {
+    -List<Collaborator> collaborators
+    TeamDto(collaborators)
+}
+
+class TeamMapper {
+    +toDTOList(teamsList)
+    +teamToDTO(team)
+}
+
+
+AssignTeamUI ..> AssignTeamController
+AssignTeamController ..> Repositories: repositories
+AssignTeamController ..> Agenda: agenda
+AssignTeamController ..> TeamRepository: teamRepository
+AssignTeamController ..> AuthenticationRepository: authenticationRepository
+AuthenticationRepository ..> UserSession
+Repositories --> Repositories: instance
+Repositories --> "1" Agenda
+Repositories --> "1" TeamRepository
+Repositories --> "1" AuthenticationRepository
+Agenda --> "*" Entry
+TeamRepository --> "*" Team
+Entry --> "1" Team
+AssignTeamController ..> EmailService
+EmailService ..> ApplicationSession
+ApplicationSession --> Email: instance
+DeiService ..> Email
+GmailService ..> Email
+AssignTeamController ..> TeamMapper
+TeamMapper ..> TeamDto
+AssignTeamController ..> EntryMapper
+EntryMapper ..> EntryDto
+
+@enduml

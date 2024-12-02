@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="pprog.ui.gui.AddTaskToDoListGUI"
+            prefHeight="400" prefWidth="600">
+
+    <center>
+        <VBox spacing="10" alignment="center" style="-fx-padding: 0 50;">
+            <Label text="Add Task to To-Do List" style="-fx-font-size: 20px;" />
+            <TextField fx:id="titleField" promptText="Title" />
+            <TextField fx:id="descriptionField" promptText="Description" />
+            <ComboBox fx:id="degreeOfUrgencyComboBox" promptText="Degree of Urgency">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="High" />
+                        <String fx:value="Medium" />
+                        <String fx:value="Low" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <TextField fx:id="expectedDurationField" promptText="Expected Duration (in days)" />
+            <ComboBox fx:id="taskTypeComboBox" promptText="Type">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Regular" />
+                        <String fx:value="Occasional" />
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            <TextField fx:id="greenSpaceField" promptText="Enter the name of the green space" />
+            <HBox spacing="10" alignment="center">
+                <Button text="Return" onAction="#handleReturnButtonAction" />
+                <Button text="Consult the list of green spaces" onAction="#handleConsultGreenSpacesButtonAction" />
+                <Button text="Submit" onAction="#handleSubmitButtonAction" />
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>

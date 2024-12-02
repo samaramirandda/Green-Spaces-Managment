@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+autonumber
+
+'hide footbox
+
+actor "HRM" as HRM
+participant ":RegisterJobUI" as UI
+participant ":RegisterJobController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant ":JobRepository" as jobRepository
+participant "job\n:Job" as JOB
+
+
+activate HRM
+
+    HRM -> UI : asks to register a new job
+    activate UI
+
+        UI -> CTRL** : create
+
+    UI --> HRM : requests data
+    deactivate UI
+
+    HRM -> UI : types/selects requested data
+    activate UI
+
+    UI --> HRM : shows all data and requests confirmation
+    deactivate UI
+
+    HRM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: registerJob(name, description)
+        activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getJobRepository()
+            activate REPS
+
+            REPS --> CTRL: jobRepository
+            deactivate REPS
+
+            CTRL -> jobRepository: registerJob(name, description)
+            activate jobRepository
+
+                jobRepository -> JOB** : register(name, description)
+
+                jobRepository -> jobRepository: addJob (job)
+                activate jobRepository
+
+                jobRepository -> jobRepository: validateJob (job)
+                activate jobRepository
+
+                jobRepository --> jobRepository
+                deactivate jobRepository
+
+                jobRepository --> jobRepository
+                deactivate jobRepository
+
+            jobRepository --> CTRL: job
+            deactivate jobRepository
+
+        CTRL --> UI: job
+        deactivate CTRL
+
+    UI --> HRM : displays operation success
+    deactivate UI
+
+deactivate HRM
+
+
+@enduml

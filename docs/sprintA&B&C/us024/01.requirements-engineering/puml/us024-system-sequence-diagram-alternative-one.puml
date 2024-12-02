@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD)
+
+autonumber
+
+actor "GSM" as ADM
+participant ":System" as System
+
+activate ADM
+
+    ADM -> System : asks to postpone an entry
+    activate System
+
+        System --> ADM : shows the entry list and asks to select one
+    deactivate System
+
+    ADM -> System : selects an entry
+    activate System
+
+        System --> ADM : requests data (i.e. new date)
+    deactivate System
+
+    ADM -> System : types requested data
+    activate System
+
+        System --> ADM : shows all data and requests confirmation
+    deactivate System
+
+    ADM -> System : confirms data
+    activate System
+
+        System --> ADM : displays operation success
+    deactivate System
+
+deactivate ADM
+
+@enduml

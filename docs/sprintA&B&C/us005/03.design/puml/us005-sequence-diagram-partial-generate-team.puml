@@ -1,0 +1,32 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "generateTeamRepository:\nGenerateTeamRepository" as GTREP
+participant "skill:\nSkill" as SKILL
+
+autonumber 16
+
+ -> GTREP : generateTeam
+autonumber 16.1
+activate GTREP
+    group Generate Team
+
+        GTREP -> SKILL** : generate(minSize, maxSize, skill)
+
+        GTREP -> GTREP: addTeam(team)
+
+        GTREP -> GTREP: validateTeam(team)
+
+    end
+    autonumber 17
+    <-- GTREP  : team
+deactivate GTREP
+
+
+@enduml

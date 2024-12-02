@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AssignVehiclesController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as agenda
+participant ":EntryMapper" as entryMAPPER
+participant "entryDto\n:EntryDto" as entryDTO
+participant "entriesListDto\n:List<EntryDto>" as entriesListDTO
+
+autonumber 3
+
+ -> CTRL : getEntriesListDTO()
+autonumber 3.1
+activate CTRL
+    group Get Entry Dto List
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> agenda: getEntriesList()
+            activate agenda
+
+            agenda --> CTRL : entriesList
+            deactivate agenda
+
+            CTRL -> entryMAPPER: toDTOList(entriesList)
+            activate entryMAPPER
+
+                entryMAPPER -> entriesListDTO** : create()
+
+                loop For each entry in entriesList
+
+                entryMAPPER -> entryDTO: entryToDTO(entry)
+                activate entryDTO
+
+                entryDTO --> entryMAPPER: entryDto
+                deactivate entryDTO
+
+                entryMAPPER -> entriesListDTO: add(entryDto)
+                activate entriesListDTO
+
+                end
+
+                entriesListDTO --> entryMAPPER: entriesListDto
+                deactivate entriesListDTO
+
+            entryMAPPER --> CTRL : entriesListDto
+            deactivate entryMAPPER
+
+    end
+    autonumber 4
+    <-- CTRL  : entriesListDTO
+deactivate CTRL
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model - US022
+
+class Organization {
+}
+
+class GreenSpacesManager {
+    email
+}
+
+class Agenda {
+}
+
+class ToDoList {
+}
+
+class Entry {
+    startingDate
+    status
+}
+
+class Task {
+    title
+    description
+    degreeOfUrgency
+    expectedDuration
+    type
+    greenSpace
+    status
+}
+
+Organization "1" -- "1..*" GreenSpacesManager : has >
+Organization "1" -- "1" Agenda : has >
+Organization "1" -- "1" ToDoList : has >
+GreenSpacesManager "1" -- "1" Task : selects  >
+GreenSpacesManager "1" -- "1..*" Entry : adds >
+Agenda "1" -- "0..*" Entry : has >
+ToDoList "1" -- "0..*" Task : has >
+Task "1" -- "1" Entry : assigned to >
+
+@enduml

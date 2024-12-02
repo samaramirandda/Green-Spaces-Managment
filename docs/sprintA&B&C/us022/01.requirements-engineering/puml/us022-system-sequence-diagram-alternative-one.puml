@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Green Spaces\nManager" as GSM
+participant ":System" as System
+
+activate GSM
+
+    GSM -> System : asks to add a new entry to the agenda
+    activate System
+
+        System --> GSM : shows to-do list and asks to select one
+    deactivate System
+
+    GSM -> System : selects a task
+    activate System
+
+        System --> GSM : requests data (i.e. Starting Date)
+    deactivate System
+
+    GSM -> System : types requested data
+    activate System
+
+        System --> GSM : shows all data and requests confirmation
+    deactivate System
+
+    GSM -> System : confirms data
+    activate System
+
+        System --> GSM : displays operation success
+    deactivate System
+
+@enduml

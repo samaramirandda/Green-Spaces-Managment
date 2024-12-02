@@ -1,0 +1,79 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTeamController" as CTRL
+participant "collaborator\n:Collaborator" as Collaborator
+participant ":EmailService" as emailService
+participant ":ApplicationSession" as ApplicationSession
+participant ":Email" as email
+participant ":DeiService" as deiService
+participant "prop:\nProperties" as Properties
+
+autonumber 22
+-> CTRL: sendTheEmailToTeam(gsmEmail, collaboratorEmail, collaboratorName, entry)
+
+autonumber 22.1
+activate CTRL
+    group Send Email to Collaborator
+
+                    CTRL -> Collaborator: getEmail()
+                    activate Collaborator
+
+                    Collaborator --> CTRL: email
+                    deactivate Collaborator
+
+                    CTRL -> Collaborator: getName()
+                    activate Collaborator
+
+                    Collaborator --> CTRL: name
+                    deactivate Collaborator
+
+                CTRL -> emailService: sendToEmailFile(gsmEmail, collaboratorEmail, collaboratorName, entry)
+                activate emailService
+
+                    emailService -> ApplicationSession: getEmailService()
+                    activate ApplicationSession
+
+                        ApplicationSession -> ApplicationSession: getEmail()
+                        activate ApplicationSession
+
+                            ApplicationSession -> Properties: getProperty(key, defaultValue)
+                            activate Properties
+
+                            Properties --> ApplicationSession: emailService
+                            deactivate Properties
+
+                        ApplicationSession --> ApplicationSession: emailService
+                        deactivate ApplicationSession
+
+                        opt Email service is Dei Service
+
+                        ApplicationSession -> deiService: sendEmail(from, to, subject, body)
+                        activate deiService
+
+                            deiService -> deiService: writeToFile(file, from, to, subject, body)
+                            activate deiService
+
+                            deiService --> deiService:
+                            deactivate deiService
+
+                        deiService --> ApplicationSession
+                        deactivate deiService
+
+                        end
+
+                    ApplicationSession --> emailService: email
+                    deactivate ApplicationSession
+
+                emailService --> CTRL
+                deactivate emailService
+
+    end group
+    autonumber 23
+    <-- CTRL :
+deactivate CTRL
+
+
+@enduml

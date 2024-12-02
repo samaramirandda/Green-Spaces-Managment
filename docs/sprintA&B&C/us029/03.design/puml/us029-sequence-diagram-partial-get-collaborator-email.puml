@@ -1,0 +1,59 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":CompleteEntryController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+
+autonumber 12
+
+ -> CTRL : getEmailCollaboratorFromSession()
+autonumber 12.1
+activate CTRL
+    group Get Collaborator email
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+                        activate REPS
+
+                        REPS --> CTRL: authenticationRepository
+                        deactivate REPS
+
+                        CTRL -> authentication: getCurrentUserSession()
+                        activate authentication
+
+                        authentication --> CTRL: authenticationFacade
+                        deactivate authentication
+
+                        CTRL -> authFacade: getCurrentUserSession()
+                        activate authFacade
+
+                        authFacade --> CTRL: userSession
+                        deactivate authFacade
+
+                        CTRL -> user: getUserId()
+                        activate user
+
+                        user --> CTRL: email
+                        deactivate user
+
+    end
+    autonumber 13
+    <-- CTRL  : email
+deactivate CTRL
+
+@enduml

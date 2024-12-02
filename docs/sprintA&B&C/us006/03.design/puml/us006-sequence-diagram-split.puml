@@ -1,0 +1,68 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Fleet\nManager" as FM
+participant ":RegisterVehicleUI" as UI
+participant ":RegisterVehicleControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "vehicleRepository:\nvehicleRepository" as vehicleRepository
+
+activate FM
+
+    FM -> UI : asks to register a new vehicle
+    activate UI
+
+        UI -> CTRL** : create
+
+    UI --> FM : requests data
+    deactivate UI
+
+    FM -> UI : types/selects requested data
+    activate UI
+
+    UI --> FM : shows all data and requests confirmation
+    deactivate UI
+
+    FM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: registerVehicle(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+        activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getVehicleRepository()
+            activate REPS
+
+            REPS --> CTRL: vehicleRepository
+            deactivate REPS
+
+            CTRL -> vehicleRepository: registerVehicle(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+            activate vehicleRepository
+
+                ref over vehicleRepository
+                    Register Vehicle
+                end ref
+
+            vehicleRepository --> CTRL: vehicle
+            deactivate vehicleRepository
+
+        CTRL --> UI: vehicle
+        deactivate CTRL
+
+    UI --> FM : displays operation success
+    deactivate UI
+
+deactivate FM
+
+@enduml

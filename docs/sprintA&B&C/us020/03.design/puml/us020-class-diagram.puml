@@ -1,0 +1,79 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class RegisterGreenSpaceUI {
+}
+
+class RegisterGreenSpaceController {
+    +RegisterGreenSpaceController(greenSpaceRepository, authenticationRepository)
+    +registerGreenSpace(name, address, type, area)
+    -getGSMFromSession()
+}
+
+class GreenSpaceRepository {
+    +registerGreenSpace(name ,address, type, area, greenSpacesManager)
+    -addGreenSpace(greenSpace)
+    -validateGreenSpace(greenSpace)
+}
+
+class GreenSpace {
+    -String name
+    -Address address
+    -GreenSpaceType type
+    -double area
+    -GreenSpacesManager greenSpacesManager
+    +GreenSpace(name, address, type, area, greenSpacesManager)
+}
+
+class GreenSpaceManager{
+    -String email
+    +GreenSpaceManager(email)
+}
+
+class Address{
+    -String street
+    -String zipcode
+    -String city
+    +Address(addressArray)
+}
+
+enum GreenSpaceType{
+    GARDEN
+    MEDIUM_SIZED_PARK
+    LARGE_SIZED_PARK
+}
+
+class Repositories{
+    +getGreenSpaceRepository();
+    +getAuthenticationRepository();
+}
+
+class AuthenticationRepository {
+    +getCurrentUserSession()
+}
+
+class UserSession {
+    +getUserId()
+}
+
+
+RegisterGreenSpaceUI ..> RegisterGreenSpaceController
+RegisterGreenSpaceController ..> Repositories: repositories
+RegisterGreenSpaceController ..> GreenSpaceRepository: greenSpaceRepository
+RegisterGreenSpaceController ..> AuthenticationRepository: authenticationRepository
+AuthenticationRepository ..> UserSession
+Repositories --> Repositories: instance
+Repositories --> "1" GreenSpaceRepository
+Repositories --> "1" AuthenticationRepository
+GreenSpaceRepository --> "*" GreenSpace
+GreenSpace --> "1" GreenSpaceManager
+GreenSpace --> "1" Address
+GreenSpace --> "1" GreenSpaceType
+
+@enduml

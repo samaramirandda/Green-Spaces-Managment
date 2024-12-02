@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":AssignTeamController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "teamRepository:\nTeamRepository" as teamRepository
+
+autonumber 16
+-> CTRL : getTeamByIndex(index)
+
+autonumber 16.1
+
+activate CTRL
+    group Get Team Object
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getTeamRepository()
+            activate REPS
+
+            REPS --> CTRL: teamRepository
+            deactivate REPS
+
+            CTRL -> teamRepository: getTeamByIndex(index)
+            activate teamRepository
+
+            teamRepository --> CTRL: team
+            deactivate teamRepository
+
+    end group
+
+    autonumber 17
+    <-- CTRL : team
+
+deactivate CTRL
+
+
+@enduml

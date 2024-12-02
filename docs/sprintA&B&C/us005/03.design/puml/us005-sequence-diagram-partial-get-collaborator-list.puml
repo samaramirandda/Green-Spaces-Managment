@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":GenerateTeamControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "collaboratorRepository:\nCollaboratorRepository" as CREP
+
+autonumber 11
+
+ -> CTRL : getCollaboratorList()
+autonumber 11.1
+activate CTRL
+    group Get Collaborator List
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getCollaboratorRepository()
+            activate REPS
+
+            REPS --> CTRL: CollaboratorRepository
+            deactivate REPS
+
+            CTRL -> CREP: getCollaboratorList()
+            activate CREP
+
+            CREP --> CTRL : CollaboratorList
+            deactivate CREP
+
+    end
+    autonumber 12
+    <-- CTRL  : CollaboratorList
+deactivate CTRL
+
+@enduml

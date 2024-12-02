@@ -1,0 +1,37 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+class Organization {
+}
+
+class GreenSpaceManager {
+    email
+}
+
+class GreenSpace {
+    name
+    address
+    area
+}
+
+class GreenSpaceType {
+    garden
+    mediumSizedPark
+    largeSizedPark
+}
+
+
+Organization "1" - "1..*" GreenSpaceManager : has >
+GreenSpaceManager "1" - "1..*" GreenSpace: register >
+GreenSpace "0..*" -- "1" GreenSpaceType : cataloged as >
+
+@enduml

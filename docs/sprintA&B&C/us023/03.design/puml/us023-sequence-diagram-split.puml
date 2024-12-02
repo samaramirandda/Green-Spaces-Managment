@@ -1,0 +1,120 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":AssignTeamUI" as UI
+participant ":AssignTeamController" as CTRL
+participant "entry\n:Entry" as ENTRY
+
+activate GSM
+
+    GSM -> UI : asks to assign a team to an entry in the agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getEntriesListDTO()
+        activate CTRL
+
+                ref over CTRL
+                    Get Entries Dto List
+                end ref
+
+        CTRL --> UI : entriesListDto
+        deactivate CTRL
+
+    UI --> GSM : shows agenda and asks to select an entry
+    deactivate UI
+
+    GSM -> UI : selects an entry in the agenda
+    activate UI
+
+        UI -> CTRL : getTeamsListDTO()
+        activate CTRL
+
+                ref over CTRL
+                    Get Team Dto List
+                end ref
+
+        CTRL --> UI : teamListDto
+        deactivate CTRL
+
+    UI --> GSM : shows teams list and asks to select one
+    deactivate UI
+
+    GSM -> UI : selects a team and assign to the entry in the agenda
+    activate UI
+
+    UI --> GSM : shows all data and requests confirmation
+    deactivate UI
+
+    GSM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: assignTeamToEntry(agendaIndex, teamIndex)
+        activate CTRL
+
+            CTRL -> CTRL: getEntryByIndex(index)
+            activate CTRL
+
+                ref over CTRL
+                    Get Entry Object
+                end ref
+
+            CTRL --> CTRL: entry
+            deactivate CTRL
+
+            CTRL -> CTRL: getTeamByIndex(index)
+            activate CTRL
+
+                ref over CTRL
+                    Get Team Object
+                end ref
+
+            CTRL --> CTRL: team
+            deactivate CTRL
+
+            CTRL -> ENTRY: assignTeam(team)
+            activate ENTRY
+
+            ENTRY --> CTRL: entry
+            deactivate ENTRY
+
+            CTRL -> CTRL: getEmailGSMFromSession()
+            activate CTRL
+
+                ref over CTRL
+                    Get GSM Email
+                end ref
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+
+            loop For each collaborator in team
+
+                CTRL -> CTRL: sendTheEmailToTeam(gsmEmail, collaboratorEmail, collaboratorName, entry)
+                activate CTRL
+
+                ref over CTRL
+                    Send Email to Collaborator
+                end ref
+
+                CTRL --> CTRL
+                deactivate CTRL
+
+            end loop
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> GSM: displays operation success
+    deactivate UI
+
+deactivate GSM
+
+@enduml

@@ -1,0 +1,90 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class GenerateTeam {
+    - int minSize
+    - int maxSize
+    - List<Skill> skillsNeeded
+    - List<Collaborator> collaboratorsNeeded
+
+    + GenerateTeam(minSize, maxSize, skillsNeeded)
+
+}
+
+class Skill {
+    - String name
+    + Skill (name)
+
+}
+
+class Collaborator {
+    -String name
+    -Date birthday
+    -Date admissionDate
+    -String address
+    -int phoneNumber
+    -String email
+    -int idNumber
+    +Collaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, job)
+
+}
+
+class SkillsRepository {
+    + getSkillsList()
+    + getSkillByName()
+}
+
+class GenerateTeamRepository {
+    - addTeam()
+    - validateTeam()
+    + generateTeam(minSize, maxSize, skillsNeeded)
+    + getTeamList()
+}
+
+class CollaboratorRepository {
+    + getCollaboratorList()
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getCollaboratorRepository()
+    + getSkillRepository()
+    + getGenerateTeamRepository()
+}
+
+class GenerateTeamController {
+    + GenerateTeamController(collaboratorRepository, skillRepository, generateTeamRepository)
+    + getSkillsList()
+    + getCollaboratorList()
+    + getTeamList()
+    + generateTeam(minSize, maxSize, skillsNeeded)
+}
+
+class GenerateTeamUI {
+}
+
+GenerateTeamUI ..> GenerateTeamController
+GenerateTeamController ..> Repositories : repositories
+GenerateTeamController ..> GenerateTeamRepository
+GenerateTeamController ..> SkillsRepository
+Repositories --> Repositories : instance
+Repositories --> "1" GenerateTeamRepository : generateTeamRepository
+Repositories --> "1" SkillsRepository : skillRepository
+Repositories --> "1" CollaboratorRepository : collaboratorRepository
+CollaboratorRepository --> "1..*" Collaborator
+Collaborator --> "1..*" Skill
+GenerateTeam --> "2..*" Collaborator
+GenerateTeamRepository --> "1..*" GenerateTeam
+SkillsRepository --> "1..*" Skill
+GenerateTeam --> "1..*" Skill
+
+
+
+@enduml

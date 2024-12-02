@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant "entry\n:Entry" as ENTRY
+participant "vehicle\n:Vehicle" as VEHICLE
+
+autonumber 21
+-> ENTRY: assignVehicles(vehiclesToAdd)
+
+autonumber 21.1
+activate ENTRY
+    group Assign Vehicles to Entry Object
+
+            loop For each vehicle in vehicleToAdd
+
+            ENTRY -> ENTRY: getVehiclesAssign()
+            activate ENTRY
+
+            ENTRY -> ENTRY: add(vehicle)
+            activate ENTRY
+
+            ENTRY --> ENTRY
+            deactivate ENTRY
+
+            ENTRY --> ENTRY
+            deactivate ENTRY
+
+            ENTRY -> VEHICLE: setOccupiedVehicle(true)
+            activate VEHICLE
+
+            VEHICLE --> ENTRY
+            deactivate VEHICLE
+
+            end
+
+    end
+
+    autonumber 22
+    <-- ENTRY : entry
+deactivate ENTRY
+
+
+@enduml

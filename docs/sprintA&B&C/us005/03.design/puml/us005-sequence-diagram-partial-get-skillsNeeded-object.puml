@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":GenerateTeamControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "SkillRepository:\nskillRepository" as SREP
+
+autonumber 14
+
+ -> CTRL : getSkillByName(skillsNeeded)
+autonumber 14.1
+activate CTRL
+    group Get Skills Needed Object
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getSkillRepository()
+            activate REPS
+
+            REPS --> CTRL: SkillRepository
+            deactivate REPS
+
+            CTRL -> SREP: getSkillByName(skillsNeeded)
+            activate SREP
+
+            SREP --> CTRL : skillsNeeded
+            deactivate SREP
+
+    end
+    autonumber 15
+    <-- CTRL  : skillsNeeded
+deactivate CTRL
+
+@enduml

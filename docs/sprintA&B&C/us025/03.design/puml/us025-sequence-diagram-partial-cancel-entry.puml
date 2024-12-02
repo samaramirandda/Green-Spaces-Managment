@@ -1,0 +1,52 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "agenda:\nAgenda" as AGENDA
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "entry\n:Entry" as ENTRY
+
+autonumber 18
+
+ -> AGENDA : cancelEntry(entry, email)
+autonumber 18.1
+activate AGENDA
+    group Cancel Entry
+
+            AGENDA -> ENTRY** : cancel(entry, email)
+
+                            AGENDA -> AGENDA: validateEntry (entry)
+                            activate AGENDA
+
+                            AGENDA --> AGENDA
+                            deactivate AGENDA
+
+                            AGENDA -> AGENDA: validateUser (email, entry)
+                            activate AGENDA
+
+                                AGENDA -> ENTRY: getGreenSpacesManager()
+                                activate ENTRY
+
+                                ENTRY --> AGENDA: greenSpacesManager
+                                deactivate ENTRY
+
+                                AGENDA -> USER: getEmail()
+                                activate USER
+
+                                USER --> AGENDA: email
+                                deactivate USER
+
+                            AGENDA --> AGENDA
+                            deactivate AGENDA
+
+    end
+    autonumber 19
+    <-- AGENDA  : entry
+deactivate AGENDA
+
+@enduml

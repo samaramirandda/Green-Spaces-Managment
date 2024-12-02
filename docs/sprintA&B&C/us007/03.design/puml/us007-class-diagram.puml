@@ -1,0 +1,61 @@
+@startuml
+
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+class CheckUpRepository{
+    -addCheckUp(checkUp)
+    -validateCheckUp(checkUp)
+    +registerCheckUp(plateNumber, kms, date)
+}
+
+class VehicleRepository {
+    +getVehicleByPlateNumber(vehiclePlateNumber)
+}
+
+class CheckUp {
+    - int kms
+    - Date date
+    + CheckUp(vehicle, kms, date)
+}
+
+class Vehicle {
+    - String plateNumber
+
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getCheckUpRepository()
+    + getVehicleRepository()
+}
+
+class RegisterCheckUpController {
+    +RegisterCheckUpController(CheckUpRepository, VehicleRepository)
+    +registerCheckUp(plateNumber, kms, date)
+    -getVehiclesByPlateNumber(vehiclePlateNumber)
+    +getVehiclesList()
+
+}
+
+class RegisterCheckUpUI{
+}
+
+RegisterCheckUpUI --> RegisterCheckUpController
+
+RegisterCheckUpController --> Repositories
+RegisterCheckUpController --> CheckUpRepository
+RegisterCheckUpController --> VehicleRepository
+
+Repositories --> "1" CheckUpRepository
+Repositories --> "1" VehicleRepository
+Repositories --> "instance" Repositories
+
+CheckUpRepository --> "*" CheckUp
+VehicleRepository --> "*" Vehicle
+CheckUp --> "1" Vehicle
+
+@enduml

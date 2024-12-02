@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant "CheckUpRepository" as CHECKUPS
+participant "checkUp" as CHECKUP
+
+autonumber 12
+-> CHECKUPS: registerCheckUp(plate number, KMS, date)
+
+autonumber 12.1
+activate CHECKUPS
+    group Register Check-up
+
+        CHECKUPS -> CHECKUP**: register(plate number, KMS, date)
+        CHECKUPS -> CHECKUPS: addCheckUp (checkup)
+
+        activate CHECKUPS
+            CHECKUPS -> CHECKUPS: validateCheckUp(checkup)
+            activate CHECKUPS
+                CHECKUPS --> CHECKUPS
+            deactivate CHECKUPS
+
+            CHECKUPS --> CHECKUPS
+        deactivate CHECKUPS
+    end
+
+    autonumber 14
+    <-- CHECKUPS : check-up
+deactivate CHECKUPS
+
+
+@enduml

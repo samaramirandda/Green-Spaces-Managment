@@ -1,0 +1,44 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":GreenSpaceMapper" as greenSpaceMapper
+participant "greenSpaceDTO\n:GreenSpaceDTO" as greenSpaceDTO
+participant "sortedGreenSpacesListByGsmDTO\n:List<GreenSpace>" as sortedGreenSpacesListByGsmDTO
+
+autonumber 11
+
+ -> greenSpaceMapper : toDTOList(sortedGreenSpacesListByGSM)
+autonumber 11.1
+activate greenSpaceMapper
+    group Get Sorted Green Space By GSM Dto List
+
+            greenSpaceMapper -> sortedGreenSpacesListByGsmDTO** : create()
+
+                            loop For each greenSpace in sortedGreenSpacesListByGSM
+
+                            greenSpaceMapper -> greenSpaceDTO: greenSpaceToDTO(greenSpace))
+                            activate greenSpaceDTO
+
+                            greenSpaceDTO --> greenSpaceMapper: greenSpaceDto
+                            deactivate greenSpaceDTO
+
+                            greenSpaceMapper -> sortedGreenSpacesListByGsmDTO: add(greenSpaceDto)
+                            activate sortedGreenSpacesListByGsmDTO
+
+                            end
+
+                            sortedGreenSpacesListByGsmDTO --> greenSpaceMapper: sortedGreenSpacesListByGsmDTO
+                            deactivate sortedGreenSpacesListByGsmDTO
+
+    end
+    autonumber 12
+    <-- greenSpaceMapper  : sortedGreenSpacesListByGsmDTO
+deactivate greenSpaceMapper
+
+@enduml

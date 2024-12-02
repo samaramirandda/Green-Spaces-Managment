@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceRepository
+participant "greenSpace\n:GreenSpace" as GREENSPACE
+
+autonumber 14
+
+ -> greenSpaceRepository : registerGreenSpace(name ,address, type, area, greenSpacesManager)
+autonumber 14.1
+activate greenSpaceRepository
+    group Register Green Space
+
+            greenSpaceRepository -> GREENSPACE** : register(name ,address, type, area, greenSpacesManager)
+
+                            greenSpaceRepository -> greenSpaceRepository: addGreenSpace (greenSpace)
+                            activate greenSpaceRepository
+
+                            greenSpaceRepository -> greenSpaceRepository: validateGreenSpace (greenSpace)
+                            activate greenSpaceRepository
+
+                            greenSpaceRepository --> greenSpaceRepository
+                            deactivate greenSpaceRepository
+
+                            greenSpaceRepository --> greenSpaceRepository
+                            deactivate greenSpaceRepository
+
+    end
+    autonumber 15
+    <-- greenSpaceRepository  : green space
+deactivate greenSpaceRepository
+
+@enduml

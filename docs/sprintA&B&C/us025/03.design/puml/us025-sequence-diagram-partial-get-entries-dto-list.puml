@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":CancelEntryController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+participant ":EntryMapper" as entryMAPPER
+participant "entryDto\n:EntryDto" as entryDTO
+participant "entryListDto\n:List<entryDto>" as entryListDTO
+
+autonumber 3
+
+ -> CTRL : getEntriesDTO()
+autonumber 3.1
+activate CTRL
+    group Get Entries Dto List
+
+CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: getEntriesList()
+            activate AGENDA
+
+            AGENDA --> CTRL : entriesList
+            deactivate AGENDA
+
+            CTRL -> entryMAPPER: toDTOList(entriesList)
+            activate entryMAPPER
+
+                entryMAPPER -> entryListDTO** : create()
+
+                loop For each entry in entriesList
+
+                entryMAPPER -> entryDTO: entryToDTO(entry)
+                activate entryDTO
+
+                entryDTO --> entryMAPPER: entryDto
+                deactivate entryDTO
+
+                entryMAPPER -> entryListDTO: add(entryDto)
+                activate entryListDTO
+
+                end
+
+                entryListDTO --> entryMAPPER: entriesListDto
+                deactivate entryListDTO
+
+            entryMAPPER --> CTRL : entriesListDto
+            deactivate entryMAPPER
+
+    end
+    autonumber 4
+    <-- CTRL  : entriesListDto
+deactivate CTRL
+
+@enduml

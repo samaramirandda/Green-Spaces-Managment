@@ -1,0 +1,73 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class RegisterCollaboratorUI {
+}
+
+class RegisterCollaboratorController {
+    +RegisterCollaboratorController(collaboratorRepository, jobRepository)
+    +registerCollaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, jobName)
+    -getJobByName(jobName)
+    +getJobsList()
+}
+
+class CollaboratorRepository {
+    -addCollaborator(collaborator)
+    -validateCollaborator(collaborator)
+    +registerCollaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, job)
+}
+
+class Collaborator {
+    -String name
+    -Date birthday
+    -Date admissionDate
+    -String address
+    -int phoneNumber
+    -String email
+    -int idNumber
+    +Collaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, job)
+}
+
+class JobRepository {
+    +getJobsByName(jobName)
+}
+
+class Job {
+    -String name
+    +Job(name)
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getJobRepository()
+    + getCollaboratorRepository()
+}
+
+enum IdDocType {
+    TAXPAYER_NUMBER
+    CITIZEN_CARD
+    PASSPORT
+}
+
+RegisterCollaboratorUI ..> RegisterCollaboratorController
+RegisterCollaboratorController ..> Repositories: repositories
+RegisterCollaboratorController ..> CollaboratorRepository: CollaboratorRepository
+RegisterCollaboratorController ..> JobRepository: JobRepository
+Repositories --> Repositories: instance
+Repositories --> "1" CollaboratorRepository
+Repositories --> "1" JobRepository
+CollaboratorRepository --> "*" Collaborator
+JobRepository --> "*" Job
+Collaborator --> "1" Job
+Collaborator --> "1" IdDocType
+
+@enduml

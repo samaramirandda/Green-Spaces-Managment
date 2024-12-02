@@ -1,0 +1,180 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":ListGreenSpacesByGSMUI" as UI
+participant ":ListGreenSpacesByGSMController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceRepository
+participant "gsmFromSession\n:GreenSpacesManager" as GREENSPACEMANAGER
+participant "greenSpacesListByGSM\n:List<GreenSpace>" as greenSpacesListByGSM
+participant ":GreenSpacesManager" as GreenSpacesManager
+participant ":Algorithm1" as algorithm
+participant ":GreenSpaceMapper" as greenSpaceMapper
+participant "greenSpaceDTO\n:GreenSpaceDTO" as greenSpaceDTO
+participant "sortedGreenSpacesListByGsmDTO\n:List<GreenSpace>" as sortedGreenSpacesListByGsmDTO
+
+activate GSM
+
+    GSM -> UI : requests to consult green spaces managed by him
+    activate UI
+
+        UI -> CTRL: sortListDTOByAlgorithm()
+        activate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+            activate REPS
+
+            REPS --> CTRL: authenticationRepository
+            deactivate REPS
+
+            CTRL -> authentication: getCurrentUserSession()
+            activate authentication
+
+            authentication --> CTRL: authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+            activate authFacade
+
+            authFacade --> CTRL: userSession
+            deactivate authFacade
+
+            CTRL -> user: getUserId()
+            activate user
+
+            user --> CTRL: email
+            deactivate user
+
+            CTRL -> GREENSPACEMANAGER** : create(email)
+
+            CTRL --> CTRL: gsmFromSession
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceRepository: sortListByAlgorithm(gsmFromSession)
+            activate greenSpaceRepository
+
+                    greenSpaceRepository -> greenSpaceRepository: getGreenSpaceListByGSM(gsmFromSession)
+                    activate greenSpaceRepository
+
+                    greenSpaceRepository -> greenSpacesListByGSM**: create
+
+                                greenSpaceRepository -> GreenSpacesManager: getGreenSpacesManager()
+                                activate GreenSpacesManager
+
+                                GreenSpacesManager -> greenSpaceRepository: greenSpacesManager
+                                deactivate GreenSpacesManager
+
+                                opt GreenSpacesManager == gsmFromSession
+
+                                greenSpaceRepository -> greenSpacesListByGSM: add(greenSpace)
+                                activate greenSpacesListByGSM
+
+                                end loop
+
+                                greenSpacesListByGSM --> greenSpaceRepository: greenSpacesListByGSM
+                                deactivate greenSpacesListByGSM
+
+                                greenSpaceRepository --> greenSpaceRepository: greenSpacesListByGSM
+                                deactivate greenSpaceRepository
+
+                    greenSpaceRepository -> ApplicationSession: getSortingAlgorithm()
+                    activate ApplicationSession
+
+                        ApplicationSession -> ApplicationSession: getAlgorithm()
+                        activate ApplicationSession
+
+                            ApplicationSession -> Properties: getProperty(key, defaultValue)
+                            activate Properties
+
+                            Properties --> ApplicationSession: algorithm
+                            deactivate Properties
+
+                        ApplicationSession --> ApplicationSession: algorithm
+                        deactivate ApplicationSession
+
+                        ApplicationSession --> greenSpaceRepository: algorithm
+                        deactivate ApplicationSession
+
+                        opt Algorithm is Algoritmo1
+
+                    greenSpaceRepository -> algorithm: sort (greenSpacesListByGSM)
+                    activate algorithm
+
+                    algorithm -> algorithm: sortList(greenSpacesListByGSM)
+                    activate algorithm
+
+                    algorithm --> algorithm
+                    deactivate algorithm
+
+                    algorithm --> greenSpaceRepository: sortedGreenSpacesListByGSM
+                    deactivate algorithm
+
+                        end
+
+            greenSpaceRepository --> CTRL: sortedGreenSpacesListByGSM
+            deactivate greenSpaceRepository
+
+            CTRL -> greenSpaceMapper: toDTOList(sortedGreenSpacesListByGSM)
+            activate greenSpaceMapper
+
+                greenSpaceMapper -> sortedGreenSpacesListByGsmDTO** : create()
+
+                loop For each greenSpace in sortedGreenSpacesListByGSM
+
+                greenSpaceMapper -> greenSpaceDTO: greenSpaceToDTO(greenSpace))
+                activate greenSpaceDTO
+
+                greenSpaceDTO --> greenSpaceMapper: greenSpaceDto
+                deactivate greenSpaceDTO
+
+                greenSpaceMapper -> sortedGreenSpacesListByGsmDTO: add(greenSpaceDto)
+                activate sortedGreenSpacesListByGsmDTO
+
+                end
+
+                sortedGreenSpacesListByGsmDTO --> greenSpaceMapper: sortedGreenSpacesListByGsmDTO
+                deactivate sortedGreenSpacesListByGsmDTO
+
+            greenSpaceMapper --> CTRL : sortedGreenSpacesListByGsmDTO
+            deactivate greenSpaceMapper
+
+        CTRL --> UI : sortedGreenSpacesListByGsmDTO
+        deactivate CTRL
+
+    UI --> GSM : displays the list
+    deactivate UI
+
+deactivate GSM
+
+@enduml

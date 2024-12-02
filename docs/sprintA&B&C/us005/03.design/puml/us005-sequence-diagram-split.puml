@@ -1,0 +1,109 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Human Resources Manager" as HRM
+participant ":GenerateTeamUI" as UI
+participant ":GenerateTeamController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "skillRepository\n:SkillRepository" as SREP
+participant "collaboratorRepository\n:CollaboratorRepository" as CREP
+participant "generateTeamRepository:\nGenerateTeamRepository" as GTREP
+participant "team\n:Team" as T
+
+
+activate HRM
+
+    HRM -> UI : Initiates a team proposal generation
+    activate UI
+
+        UI -> CTRL** : create
+
+    UI --> HRM : Requests data (min and max team size)
+    deactivate UI
+
+    HRM -> UI : Types requested data
+    activate UI
+
+        UI -> CTRL : getSkillsList()
+        activate CTRL
+
+           ref over CTRL
+                Get Skills List
+           end ref
+
+        CTRL --> UI : SkillsList
+        deactivate CTRL
+
+    UI --> HRM : shows the list of skills and asks to select one
+    deactivate UI
+
+    HRM -> UI : chooses skill
+    activate UI
+
+    UI --> HRM : generate the team proposal and requests confirmation
+    deactivate UI
+
+    HRM -> UI : confirms the team generated
+    activate UI
+
+         UI -> CTRL : getCollaboratorList()
+                activate CTRL
+
+                    ref over CTRL
+                            Get Collaborator List
+                    end ref
+
+         CTRL --> UI : collaboratorList
+                    deactivate CTRL
+
+        UI -> CTRL: generateTeam(minSize, maxSize, skillsNeeded)
+        activate CTRL
+
+            CTRL -> CTRL: getSkillByName(skillsNeeded)
+                        activate CTRL
+
+                        ref over CTRL
+                                Get SkillsNeeded Object
+                        end ref
+
+            CTRL --> CTRL : skillsNeeded
+
+                        deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getGenerateTeamRepository()
+            activate REPS
+
+            REPS --> CTRL: generateTeamRepository
+            deactivate REPS
+
+            CTRL -> GTREP: generateTeam(minSize, maxSize, skillsNeeded)
+            activate GTREP
+
+                ref over GTREP
+                        Generate Team
+                end ref
+
+            GTREP --> CTRL: team
+            deactivate GTREP
+
+        CTRL --> UI: team
+        deactivate CTRL
+
+    UI --> HRM: displays operation success
+    deactivate UI
+
+deactivate HRM
+
+@enduml

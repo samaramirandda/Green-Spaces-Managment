@@ -1,0 +1,92 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Human Resources\n Manager" as HRM
+participant ":AssignSkillUI" as UI
+participant ":AssignSkillControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "skillsRepository:\nSkillsRepository" as SkillsRepository
+participant "collaboratorsRepository:\n«CollaboratorsRepository" as collaboratorsRepository
+participant "collaborator\n:Collaborator" as COLLABORATOR
+
+activate HRM
+
+        HRM -> UI : asks to assign skills to a collaborator
+
+        activate UI
+
+        UI -> CTRL : getCollaboratorsList()
+        activate CTRL
+
+            ref over CTRL
+                Get Collaborator List
+            end ref
+
+            CTRL --> UI : CollaboratorsList
+            deactivate CTRL
+
+            UI --> HRM : displays list of collaborators and asks to select one
+        deactivate UI
+
+    HRM -> UI : selects the collaborator
+    activate UI
+
+    UI -> CTRL : getSkillsList()
+        activate CTRL
+
+            ref over CTRL
+                Get Skills List
+            end ref
+
+            CTRL --> UI : SkillsList
+            deactivate CTRL
+
+        UI --> HRM : displays list of skills
+    deactivate UI
+
+    HRM -> UI : selects skills and assign to the collaborator
+    activate UI
+
+        UI --> HRM : shows all data and requests confirmation
+    deactivate UI
+
+    HRM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: assignSkillToCollaborator (collaborator, skillsToAssign)
+
+                activate CTRL
+
+                    CTRL -> CTRL: getCollaboratorByName (collaboratorName)
+                    activate CTRL
+
+                    ref over CTRL
+                        Get Collaborator Object
+                    end ref
+
+                    CTRL --> CTRL: collaborator
+                    deactivate CTRL
+
+                    CTRL -> COLLABORATOR: assignSkillToCollaborator (collaborator, skillsToAssign)
+                    activate COLLABORATOR
+
+                    COLLABORATOR -> COLLABORATOR : assignSkillToCollaborator
+
+                    COLLABORATOR --> CTRL : collaborator
+                    deactivate COLLABORATOR
+
+
+                CTRL --> UI: collaborator
+                deactivate CTRL
+            UI --> HRM: displays operation success
+    deactivate UI
+
+deactivate HRM
+
+@enduml

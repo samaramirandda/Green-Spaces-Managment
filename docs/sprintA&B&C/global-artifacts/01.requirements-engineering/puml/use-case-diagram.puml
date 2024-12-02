@@ -1,0 +1,63 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+'skinparam shadowing false
+
+skinparam rectangle{
+    BorderColor yellow
+}
+
+title Use Case Diagram
+
+left to right direction
+
+rectangle "System Actors" as actors {
+    actor Collaborator
+    actor "Green\nSpaces\nManager" as GSM
+    actor "Green\nSpaces\nUser" as GSU
+    actor "Human\nResources\nManager" as HRM
+    actor "Fleet Manager" as FM
+}
+
+rectangle "Use Cases" as usecases{
+    usecase "UC01 - Register Skills of a Collaborator" as UC01
+    HRM --> UC01
+    usecase "UC02 - Register a Job" as UC02
+    HRM --> UC02
+    usecase "UC03 - Register collaborator with job and fundamental characteristics" as UC03
+    HRM --> UC03
+    usecase "UC04 - Assign Skills" as UC04
+    HRM --> UC04
+    usecase "UC05 - Generate a team proposal automatically " as UC05
+    HRM --> UC05
+    usecase "UC06 - Register a vehicle" as UC06
+    FM --> UC06
+    usecase "UC07 - Register Vehicle's Check-up" as UC07
+    FM --> UC07
+    usecase "UC08 - List the vehicles needing the check-up" as UC08
+    FM --> UC08
+
+    usecase "UC20 - Register a Green Space" as UC20
+    GSM --> UC20
+    usecase "UC21 - Add a new entry to the To-Do List" as UC21
+    GSM --> UC21
+    usecase "UC22 - Add a entry in the Agenda" as UC22
+    GSM --> UC22
+    usecase "UC23 - Assign a Team to an entry in the Agenda" as UC23
+    GSM --> UC23
+    usecase "UC24 - Postpone an entry in the Agenda" as UC24
+    GSM --> UC24
+    usecase "UC25 - Cancel an entry in the Agenda" as UC25
+    GSM --> UC25
+    usecase "UC26 - Assign Vehicles to an entry in the Agenda" as UC26
+    GSM --> UC26
+    usecase "UC27 - List of Green Spaces managed by me" as UC27
+    GSM --> UC27
+    usecase "UC28 - Consult the Task Between Two Dates" as UC28
+    Collaborator --> UC28
+    usecase "UC29 - Record the completion of a task" as UC29
+    Collaborator --> UC29
+
+}
+
+@enduml

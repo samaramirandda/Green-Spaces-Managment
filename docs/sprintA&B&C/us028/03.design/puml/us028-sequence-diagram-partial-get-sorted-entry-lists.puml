@@ -1,0 +1,42 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+
+'hide footbox
+participant ":ConsultTasksController" as CTRL
+participant ":EntryMapper" as entryMAPPER
+participant "entryListDto\n:List<entryDto>" as entryListDTO
+
+autonumber 11
+CTRL -> entryMAPPER : toDTOList(entryListDTO)()
+autonumber 11.1
+activate entryMAPPER
+
+    group Get Sorted Entry Spaces List
+            entryMAPPER -> "tasksCollaborator\n:List<Entry>" : create()
+            activate "tasksCollaborator\n:List<Entry>"
+
+            loop For each task space in entryListDTO
+
+                            entryMAPPER -> entryListDTO: entryListToDTO(entry))
+                            deactivate "tasksCollaborator\n:List<Entry>"
+                            activate entryListDTO
+
+                            entryListDTO --> entryMAPPER: entryListDTO
+                            deactivate entryListDTO
+
+                            entryMAPPER -> "tasksCollaborator\n:List<Entry>": add(task)
+                            activate "tasksCollaborator\n:List<Entry>"
+                        end
+
+                "tasksCollaborator\n:List<Entry>" --> entryMAPPER: tasksCollaborator
+                deactivate "tasksCollaborator\n:List<Entry>"
+
+    autonumber 12
+        entryMAPPER --> CTRL : tasksCollaborator
+deactivate CTRL
+
+@enduml

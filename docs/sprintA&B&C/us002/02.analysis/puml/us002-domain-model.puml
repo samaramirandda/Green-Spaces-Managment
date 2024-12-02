@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+
+hide methods
+
+title Domain Model
+
+'class Organization {
+'
+'}
+
+class Job {
+    name
+    description
+
+}
+
+class HRM {
+    name
+
+}
+
+
+'Organization "1" - "1" HRM: has >
+HRM "1" -- "1..*" Job : register   >
+
+@enduml

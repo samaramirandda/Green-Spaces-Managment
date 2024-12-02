@@ -1,0 +1,57 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":ConsultTasksController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant "user:\nUserSession" as user
+participant "repositories\n:Repositories" as PLAT
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+
+
+autonumber 3
+
+ -> CTRL : getTasksForCollaboratorBetweenDates(startDate, endDate)
+autonumber 3.1
+activate CTRL
+    group Get Collaborator from session
+
+            CTRL -> RepositorySingleton : getInstance()
+            activate RepositorySingleton
+
+                RepositorySingleton --> CTRL: repositories
+            deactivate RepositorySingleton
+
+            CTRL -> PLAT : getAuthenticationRepository()
+            activate PLAT
+
+                PLAT --> CTRL: authenticationRepository
+            deactivate PLAT
+
+            CTRL -> authentication : getCurrentUserSession()
+            activate authentication
+
+                authentication --> CTRL : authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+                        activate authFacade
+
+                        authFacade --> CTRL: userSession
+                        deactivate authFacade
+
+                        CTRL -> user: getUserId()
+                        activate user
+    end
+    autonumber 4
+    CTRL <-- CTRL  : email
+deactivate CTRL
+
+
+@enduml

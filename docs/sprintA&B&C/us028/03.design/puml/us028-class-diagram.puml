@@ -1,0 +1,45 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+class ConsultTasksUI{}
+
+class ConsultTasksController{
+    - getAuthenticationRepository()
+    - getEmailCollaboratorFromSession()
+    + getTasksForCollaboratorBetweenDates(startDate, endDate)
+}
+
+class Repositories{
+    -Repositories()
+    +getInstance(): Repositories
+    +getToDoList()
+}
+
+class Agenda{
+    + getTasksForCollaboratorBetweenDates(collaboratorEmail, startDate, endDate)
+    + verifyCollaborator(entry, collaboratorFromSession)
+}
+
+enum AgendaStatus{
+        PLANNED
+        POSTPONED
+        CANCELED
+        DONE
+}
+
+ConsultTasksUI ..> ConsultTasksController
+
+ConsultTasksController ..> Repositories
+
+ConsultTasksController ..> Agenda
+
+Repositories --> Repositories: repositories
+
+Repositories --> "1" Agenda
+
+Agenda --> AgendaStatus
+@enduml

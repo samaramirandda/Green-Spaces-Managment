@@ -1,0 +1,83 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+
+skinparam classAttributeIconSize 0
+
+class CompleteEntryAgendaUI{}
+
+class CompleteEntryAgendaController{
+    +CompleteEntryAgendaController(agenda, authenticationRepository)
+    +cancelEntry(entryIndex)
+    +getEntriesListDTO()
+    -getEntryByIndex(index)
+    -getEmailCollaboratorFromSession()
+
+}
+
+class Repositories{
+    -Repositories()
+    +getInstance() : Repositories
+    +getAgenda()
+    +getAuthenticationRepository()
+}
+
+class AuthenticationRepository {
+    +getCurrentUserSession()
+}
+
+class UserSession {
+    +getUserId()
+}
+
+class EntryMapper {
+    +toDTOList(entriesList)
+    +entryToDTO(entry)
+}
+
+class EntryDTO {
+    -Date startingDate
+    -Task task
+    -AgendaStatus status
+    +EntryDTO(startingDate, task)
+}
+
+class Agenda{
+    -validateEntry(entry)
+    -verifyCollaborator(email, entry)
+    +getEntriesList()
+    +completeEntry(entry, email)
+}
+
+class Entry{
+    -Date startingDate
+    -Task task
+    -AgendaStatus status
+    +changeStatus(status)
+    +Entry(startingDate, task)
+}
+
+enum AgendaStatus {
+    PLANNED
+    POSTPONED
+    CANCELED
+    DONE
+}
+
+CompleteEntryAgendaUI ..> CompleteEntryAgendaController
+CompleteEntryAgendaController ..> Repositories : repositories
+CompleteEntryAgendaController ..> AuthenticationRepository : authenticationRepository
+CompleteEntryAgendaController ..> Agenda: agenda
+Repositories --> Repositories: instance
+Repositories --> "1" Agenda
+Repositories --> "1" AuthenticationRepository
+AuthenticationRepository ..> UserSession
+CompleteEntryAgendaController ..> EntryMapper
+EntryMapper ..> EntryDTO
+Agenda --> "*" Entry
+Entry --> "1" AgendaStatus
+
+
+@enduml

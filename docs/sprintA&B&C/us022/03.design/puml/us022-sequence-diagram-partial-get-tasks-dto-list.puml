@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AddEntryAgendaControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "toDoList:\nToDoList" as toDoList
+participant ":TaskMapper" as taskMAPPER
+participant "taskDto\n:TaskDto" as taskDTO
+participant "tasksListDto\n:List<TaskDto>" as taskListDTO
+
+autonumber 3
+
+ -> CTRL : getTaskListDTO()
+autonumber 3.1
+activate CTRL
+    group Get Tasks Dto List
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getToDoList()
+            activate REPS
+
+            REPS --> CTRL: toDoList
+            deactivate REPS
+
+            CTRL -> toDoList: getTasksList()
+            activate toDoList
+
+            toDoList --> CTRL : tasksList
+            deactivate toDoList
+
+            CTRL -> taskMAPPER: toDTOList(tasksList)
+            activate taskMAPPER
+
+                taskMAPPER -> taskListDTO** : create()
+
+                loop For each task in tasksList
+
+                taskMAPPER -> taskDTO: taskToDTO(task)
+                activate taskDTO
+
+                taskDTO --> taskMAPPER: taskDto
+                deactivate taskDTO
+
+                taskMAPPER -> taskListDTO: add(taskDto)
+                activate taskListDTO
+
+                end
+
+                taskListDTO --> taskMAPPER: tasksListDto
+                deactivate taskListDTO
+
+            taskMAPPER --> CTRL : tasksListDto
+            deactivate taskMAPPER
+
+    end
+    autonumber 4
+    <-- CTRL  : taskListDTO()
+deactivate CTRL
+
+@enduml

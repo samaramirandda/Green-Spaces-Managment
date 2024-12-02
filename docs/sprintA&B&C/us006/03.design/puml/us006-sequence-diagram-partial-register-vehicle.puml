@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant "vehicleRepository:\nvehicleRepository" as vehicleRepository
+participant "vehicle\n:Vehicle" as VEHICLE
+
+autonumber 12
+-> vehicleRepository : registerVehicle(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+
+autonumber 12.1
+
+activate vehicleRepository
+    group Register Vehicle
+
+                vehicleRepository -> VEHICLE** : register(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+
+                vehicleRepository -> vehicleRepository: addVehicle (vehicle)
+                activate vehicleRepository
+
+                vehicleRepository -> vehicleRepository: validateVehicle (vehicle)
+                activate vehicleRepository
+
+                vehicleRepository --> vehicleRepository
+                deactivate vehicleRepository
+
+                vehicleRepository --> vehicleRepository
+                deactivate vehicleRepository
+
+    end group
+
+    autonumber 13
+    <-- vehicleRepository : vehicle
+deactivate vehicleRepository
+
+
+@enduml

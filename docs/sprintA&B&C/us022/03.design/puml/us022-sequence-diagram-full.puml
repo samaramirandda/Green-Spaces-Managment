@@ -1,0 +1,232 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":AddEntryAgendaUI" as UI
+participant ":AddEntryAgendaControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "toDoList:\nToDoList" as toDoList
+participant ":TaskMapper" as taskMAPPER
+participant "taskDto\n:TaskDto" as taskDTO
+participant "tasksListDto\n:List<TaskDto>" as taskListDTO
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "agenda:\nAgenda" as agenda
+participant "entry\n:Entry" as ENTRY
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "task\n:Task" as TASK
+
+activate GSM
+
+    GSM -> UI : asks to add a new entry to the agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getTaskListDTO()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getToDoList()
+            activate REPS
+
+            REPS --> CTRL: toDoList
+            deactivate REPS
+
+            CTRL -> toDoList: getTasksList()
+            activate toDoList
+
+            toDoList --> CTRL : tasksList
+            deactivate toDoList
+
+            CTRL -> taskMAPPER: toDTOList(tasksList)
+            activate taskMAPPER
+
+                taskMAPPER -> taskListDTO** : create()
+
+                loop For each task in tasksList
+
+                taskMAPPER -> taskDTO: taskToDTO(task)
+                activate taskDTO
+
+                taskDTO --> taskMAPPER: taskDto
+                deactivate taskDTO
+
+                taskMAPPER -> taskListDTO: add(taskDto)
+                activate taskListDTO
+
+                end
+
+                taskListDTO --> taskMAPPER: tasksListDto
+                deactivate taskListDTO
+
+            taskMAPPER --> CTRL : tasksListDto
+            deactivate taskMAPPER
+
+        CTRL --> UI : tasksListDto
+        deactivate CTRL
+
+    UI --> GSM : shows to-do list and asks to select one
+    deactivate UI
+
+    GSM -> UI : selects a task
+    activate UI
+
+    UI --> GSM : requests data (i.e. Starting Date)
+    deactivate UI
+
+    GSM -> UI : types requested data
+    activate UI
+
+    UI --> GSM : shows all data and requests confirmation
+    deactivate UI
+
+    GSM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: addEntryAgenda(startingDate, indexTask)
+        activate CTRL
+
+            CTRL -> CTRL: getTaskByIndex(index)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getToDoList()
+            activate REPS
+
+            REPS --> CTRL: toDoList
+            deactivate REPS
+
+            CTRL -> toDoList: getTaskByIndex(index)
+            activate toDoList
+
+            toDoList --> CTRL: task
+            deactivate toDoList
+
+            CTRL --> CTRL: task
+            deactivate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+            activate REPS
+
+            REPS --> CTRL: authenticationRepository
+            deactivate REPS
+
+            CTRL -> authentication: getCurrentUserSession()
+            activate authentication
+
+            authentication --> CTRL: authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+            activate authFacade
+
+            authFacade --> CTRL: userSession
+            deactivate authFacade
+
+            CTRL -> user: getUserId()
+            activate user
+
+            user --> CTRL: email
+            deactivate user
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> agenda: addEntryAgenda(startingDate, task, email)
+            activate agenda
+
+                agenda -> ENTRY** : create(startingDate, task)
+
+                agenda -> agenda: addEntry (email, entry)
+                activate agenda
+
+                agenda -> agenda: validateEntry (entry)
+                activate agenda
+
+                agenda --> agenda
+                deactivate agenda
+
+                agenda -> agenda: validateUser (email, entry)
+                activate agenda
+
+                    agenda -> ENTRY: getGreenSpacesManager()
+                    activate ENTRY
+
+                    ENTRY --> agenda: greenSpacesManager
+                    deactivate ENTRY
+
+                    agenda -> USER: getEmail()
+                    activate USER
+
+                    USER --> agenda: email
+                    deactivate USER
+
+                agenda --> agenda
+                deactivate agenda
+
+                agenda -> ENTRY: getTask()
+                activate ENTRY
+
+                ENTRY --> agenda: task
+                deactivate ENTRY
+
+                agenda -> TASK: changeStatus(TaskStatus.PROCESSED)
+                activate TASK
+
+                TASK --> agenda
+                deactivate TASK
+
+                agenda --> agenda
+                deactivate agenda
+
+            agenda --> CTRL: entry
+            deactivate agenda
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> GSM: displays operation success
+    deactivate UI
+
+deactivate GSM
+
+@enduml

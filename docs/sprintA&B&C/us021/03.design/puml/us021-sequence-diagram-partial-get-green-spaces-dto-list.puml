@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AddTaskToDoListControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceREP
+participant ":GreenSpaceMapper" as greenSpaceMAPPER
+participant "GreenSpaceDto\n:GreenSpaceDto" as greenSpaceDTO
+participant "GreenSpacesListDto\n:List<TaskDto>" as greenSpacesListDTO
+
+autonumber 3
+
+ -> CTRL : getGreenSpacesDTO()
+autonumber 3.1
+activate CTRL
+    group Get Green Spaces DTO List
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceREP: getGreenSpacesList()
+            activate greenSpaceREP
+
+            greenSpaceREP --> CTRL : greenSpacesList
+            deactivate greenSpaceREP
+
+            CTRL -> greenSpaceMAPPER: toDTOList(greenSpacesList)
+            activate greenSpaceMAPPER
+
+                greenSpaceMAPPER -> greenSpacesListDTO** : create()
+
+                loop For each task in greenSpacesList
+
+                greenSpaceMAPPER -> greenSpaceDTO: tgreenSpaceToDTO(greenSpace)
+                activate greenSpaceDTO
+
+                greenSpaceDTO --> greenSpaceMAPPER: greenSpaceDTO
+                deactivate greenSpaceDTO
+
+                greenSpaceMAPPER -> greenSpacesListDTO: add(greenSpaceDto)
+                activate greenSpacesListDTO
+
+                end
+
+                greenSpacesListDTO --> greenSpaceMAPPER: greenSpacesListDto
+                deactivate greenSpacesListDTO
+
+            greenSpaceMAPPER --> CTRL : greenSpacesListDto
+            deactivate greenSpaceMAPPER
+
+    end
+    autonumber 4
+    <-- CTRL  : greenSpacesListDto()
+deactivate CTRL
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":CancelEntryController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+
+autonumber 10
+
+ -> CTRL : getEntryByIndex(entryIndex)
+autonumber 10.1
+activate CTRL
+    group Get Entry By Index
+
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: getEntryByIndex(entryIndex)
+            activate AGENDA
+
+            AGENDA --> CTRL: entry
+            deactivate AGENDA
+
+    end
+    autonumber 11
+    <-- CTRL  : entry
+deactivate CTRL
+
+@enduml

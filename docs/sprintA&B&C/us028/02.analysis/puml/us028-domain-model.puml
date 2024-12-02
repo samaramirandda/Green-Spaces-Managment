@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+'class Platform {
+'  -description
+'}
+
+class Collaborator {
+    name
+    birthday
+    admissionDate
+    address
+    phoneNumber
+    email
+    IDDocType
+    IDNumber
+}
+
+class Task {
+    title
+    description
+    expectedDuration
+}
+
+class Entry {
+    startingDate
+}
+
+
+Collaborator "1" - "*" Entry : consult >
+Task "1" -- "1" Entry : assigned to >
+
+@enduml

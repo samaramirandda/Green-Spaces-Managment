@@ -1,0 +1,32 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+class Organization {
+}
+
+class GSM {
+    name
+}
+
+class Entry {
+    startingDate
+    agendaStatus
+}
+
+class Agenda {
+    entriesList
+}
+
+Organization "1" -- "1" Agenda : has >
+Organization "1" -- "1..*" GSM : has >
+Agenda "1" -- "0..*" Entry : has >
+GSM "1" -- "1..*" Entry: postpone >
+
+@enduml

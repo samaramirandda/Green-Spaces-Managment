@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "toDoList:\nToDoList" as toDoList
+participant "GreenSpace:\nGreenSpace" as greenSpace
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "task\n:Task" as TASK
+
+autonumber 20
+
+ -> toDoList : create(title, description, degreeOfUrgency, expectedDurationTime, taskType, greenSpace)
+autonumber 20.1
+activate toDoList
+    group Create Task
+
+            toDoList -> TASK** : create(title, description, degreeOfUrgency, expectedDurationTime, taskType, greenSpace)
+
+                            toDoList -> toDoList: addTask (email, task)
+                            activate toDoList
+
+                            toDoList -> toDoList: validateEntry (task)
+                            activate toDoList
+
+                            toDoList --> toDoList
+                            deactivate toDoList
+
+                            toDoList -> toDoList: validateUser (email, task)
+                            activate toDoList
+
+                                toDoList -> TASK: getGreenSpacesManager()
+                                activate TASK
+
+                                TASK --> toDoList: greenSpacesManager
+                                deactivate TASK
+
+                                toDoList -> USER: getEmail()
+                                activate USER
+
+                                USER --> toDoList: email
+                                deactivate USER
+
+                            toDoList --> toDoList
+                            deactivate toDoList
+
+    end
+    autonumber 21
+    <-- toDoList  : task
+deactivate toDoList
+
+@enduml

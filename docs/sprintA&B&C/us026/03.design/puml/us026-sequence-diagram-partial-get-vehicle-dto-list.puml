@@ -1,0 +1,75 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AssignVehiclesController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "vehicleRepository:\nVehicleRepository" as vehicleRepository
+participant ":VehicleMapper" as vehicleMAPPER
+participant "vehicleDto\n:VehicleDto" as vehicleDTO
+participant "vehicleListDto\n:List<VehicleDto>" as vehicleListDTO
+
+autonumber 7
+
+ -> CTRL : getVehiclesListDTO()
+autonumber 7.1
+activate CTRL
+    group Get Vehicle Dto List
+
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getVehicleRepository()
+            activate REPS
+
+            REPS --> CTRL: vehicleRepository
+            deactivate REPS
+
+            CTRL -> vehicleRepository: getVehiclesList()
+            activate vehicleRepository
+
+            vehicleRepository --> CTRL : vehiclesList
+            deactivate vehicleRepository
+
+            CTRL -> vehicleMAPPER: toDTOList(vehiclesList)
+            activate vehicleMAPPER
+
+                vehicleMAPPER -> vehicleListDTO** : create()
+
+                loop For each vehicle in vehiclesList
+
+                vehicleMAPPER -> vehicleDTO: vehicleToDTO(vehicle)
+                activate vehicleDTO
+
+                vehicleDTO --> vehicleMAPPER: vehicleDto
+                deactivate vehicleDTO
+
+                vehicleMAPPER -> vehicleListDTO: add(vehicleDto)
+                activate vehicleListDTO
+
+                end
+
+                vehicleListDTO --> vehicleMAPPER: vehiclesListDto
+                deactivate vehicleListDTO
+
+            vehicleMAPPER --> CTRL : vehiclesListDto
+            deactivate vehicleMAPPER
+
+
+    end
+    autonumber 8
+    <-- CTRL  : vehiclesListDTO()
+deactivate CTRL
+
+
+@enduml

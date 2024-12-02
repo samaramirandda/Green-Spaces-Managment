@@ -1,0 +1,117 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class ListGreenSpacesByGSMUI {
+}
+
+class ListGreenSpacesByGSMController {
+    +ListGreenSpacesByGSMController(authenticationRepository, greenSpaceRepository)
+    -getGSMFromSession()
+    +sortListDTOByAlgorithm()
+}
+
+class GreenSpaceRepository {
+    +getGreenSpaceListByGSM(gsmFromSession)
+    +sortListByAlgorithm(gsmFromSession)
+}
+
+class GreenSpace {
+    -String name
+    -Address address
+    -GreenSpaceType type
+    -double area
+    -GreenSpacesManager greenSpacesManager
+    +GreenSpace(name, address, type, area, greenSpacesManager)
+}
+
+class GreenSpaceManager{
+    -String email
+    +GreenSpaceManager(email)
+}
+
+class Address{
+    -String street
+    -String zipcode
+    -String city
+    +Address(addressArray)
+}
+
+enum GreenSpaceType{
+    GARDEN
+    MEDIUM_SIZED_PARK
+    LARGE_SIZED_PARK
+}
+
+class Repositories{
+    +getGreenSpaceRepository();
+    +getAuthenticationRepository();
+}
+
+class AuthenticationRepository {
+    +getCurrentUserSession()
+}
+
+class UserSession {
+    +getUserId()
+}
+
+class GreenSpaceDTO {
+    -String name
+    -Adress adress
+    -GreenSpaceType type
+    -double area
+    -GreenSpacesManager greenSpacesManager
+    +GreenSpaceDTO(name, adress, type, area, greenSpacesManager)
+}
+
+class GreenSpaceMapper {
+    +toDTOList(greenSpacesList)
+    +greenSpaceToDTO(greenSpace)
+}
+
+class ApplicationSession {
+    -getAlgorithm()
+    +getSortingAlgorithm()
+}
+
+interface SortingAlgorithm {
+    +sort(managedGreenSpacesList)
+}
+
+class Algoritmo1 {
+    +sort(managedGreenSpacesList)
+    -sortList(managedGreenSpacesList)
+}
+
+class Algoritmo2 {
+    +sort(managedGreenSpacesList)
+    -sortList(managedGreenSpacesList)
+}
+
+
+ListGreenSpacesByGSMUI ..> ListGreenSpacesByGSMController
+ListGreenSpacesByGSMController ..> Repositories: repositories
+ListGreenSpacesByGSMController ..> GreenSpaceRepository: greenSpaceRepository
+ListGreenSpacesByGSMController ..> AuthenticationRepository: authenticationRepository
+AuthenticationRepository ..> UserSession
+Repositories --> Repositories: instance
+Repositories --> "1" GreenSpaceRepository
+Repositories --> "1" AuthenticationRepository
+GreenSpaceRepository --> "*" GreenSpace
+GreenSpace --> "1" GreenSpaceManager
+GreenSpace --> "1" Address
+GreenSpace --> "1" GreenSpaceType
+GreenSpaceRepository ..> ApplicationSession
+ApplicationSession --> SortingAlgorithm: instance
+Algoritmo1 ..> SortingAlgorithm
+Algoritmo2 ..> SortingAlgorithm
+ListGreenSpacesByGSMController ..> GreenSpaceMapper
+GreenSpaceMapper ..> GreenSpaceDTO
+
+@enduml

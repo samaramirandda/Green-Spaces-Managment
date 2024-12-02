@@ -1,0 +1,75 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":ListGreenSpacesByGSMUI" as UI
+participant ":ListGreenSpacesByGSMController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceRepository
+participant ":GreenSpaceMapper" as greenSpaceMapper
+
+activate GSM
+
+    GSM -> UI : requests to consult green spaces managed by him
+    activate UI
+
+        UI -> CTRL: sortListDTOByAlgorithm()
+        activate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+                ref over CTRL
+                    Get GSM from session
+                end ref
+
+            CTRL --> CTRL: gsmFromSession
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceRepository: sortListByAlgorithm(gsmFromSession)
+            activate greenSpaceRepository
+
+                ref over greenSpaceRepository
+                    Sort List By Algorithm
+                end ref
+
+            greenSpaceRepository --> CTRL: sortedGreenSpacesListByGSM
+            deactivate greenSpaceRepository
+
+            CTRL -> greenSpaceMapper: toDTOList(sortedGreenSpacesListByGSM)
+            activate greenSpaceMapper
+
+                ref over greenSpaceMapper
+                    Get Sorted Green Space By GSM Dto List
+                end ref
+
+            greenSpaceMapper --> CTRL : sortedGreenSpacesListByGsmDTO
+            deactivate greenSpaceMapper
+
+        CTRL --> UI : sortedGreenSpacesListByGsmDTO
+        deactivate CTRL
+
+    UI --> GSM : displays the list
+    deactivate UI
+
+deactivate GSM
+
+@enduml

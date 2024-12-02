@@ -1,0 +1,98 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Collaborator" as COLLABORATOR
+participant ":CompleteEntryAgendaUI" as UI
+participant ":CancelEntryAgendaController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+
+activate COLLABORATOR
+
+    COLLABORATOR -> UI : Asks to complete a entry in the Agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getEntriesDTO()
+                activate CTRL
+
+                     ref over CTRL
+                        Get Entries Dto List
+                     end ref
+
+                CTRL --> UI : entriesListoDto
+                deactivate CTRL
+
+    UI --> COLLABORATOR : Shows list of entries in the Agenda
+    deactivate UI
+
+    COLLABORATOR -> UI : selects a entry
+    activate UI
+
+    UI --> COLLABORATOR : shows all data and requests confirmation
+    deactivate UI
+
+    COLLABORATOR -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: cancelEntry(entryIndex)
+        activate CTRL
+
+            CTRL -> CTRL: getEntryByIndex(entryIndex)
+                        activate CTRL
+
+                            ref over CTRL
+                                Get Entry By Index
+                            end ref
+
+                        CTRL --> CTRL: entry
+                        deactivate CTRL
+
+                        CTRL -> CTRL: getEmailCollaboratorFromSession()
+                        activate CTRL
+
+                         ref over CTRL
+                            Get Collaborator email
+                         end ref
+
+                        CTRL --> CTRL: email
+                        deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: completeEntry(entry, email)
+            activate AGENDA
+
+                ref over AGENDA
+                    Complete Entry
+                end ref
+
+                AGENDA --> CTRL: entry
+                deactivate AGENDA
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> COLLABORATOR: displays operation success
+    deactivate UI
+
+deactivate COLLABORATOR
+
+@enduml

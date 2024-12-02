@@ -1,0 +1,29 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant "JobRepository" as JOBS
+participant "job\n:Job" as JOB
+
+autonumber 13
+-> JOBS: registerJob(name, description)
+
+autonumber 13.1
+activate JOBS
+    group Register Job
+
+        JOBS -> JOB**: register(name, description)
+        JOBS -> JOBS: addJob (job)
+
+        activate JOBS
+            JOBS -> JOBS: validateJob(job)
+'
+    end
+
+    autonumber 13
+    <-- JOBS : job
+deactivate JOBS
+
+
+@enduml

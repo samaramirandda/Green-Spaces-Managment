@@ -1,0 +1,134 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Human Resources\n Manager" as HRM
+participant ":AssignSkillUI" as UI
+participant ":AssignSkillControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "skillsRepository:\nSkillsRepository" as SkillsRepository
+participant "collaboratorsRepository:\nCollaboratorsRepository" as collaboratorsRepository
+participant "collaborator\n:Collaborator" as COLLABORATOR
+
+activate HRM
+
+        HRM -> UI : asks to assign skills to a collaborator
+
+        activate UI
+
+        UI -> CTRL : getCollaboratorsList()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getCollaboratorsRepository()
+            activate REPS
+
+            REPS --> CTRL: CollaboratorsRepository
+            deactivate REPS
+
+            CTRL -> collaboratorsRepository: getCollaboratorsList()
+            activate collaboratorsRepository
+
+            collaboratorsRepository --> CTRL : CollaboratorsList
+            deactivate collaboratorsRepository
+
+            CTRL --> UI : CollaboratorsList
+            deactivate CTRL
+
+            UI --> HRM : displays list of collaborators and asks to select one
+        deactivate UI
+
+    HRM -> UI : selects the collaborator
+    activate UI
+
+    UI -> CTRL : getSkillsList()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getSkillsRepository()
+            activate REPS
+
+            REPS --> CTRL: SkillsRepository
+            deactivate REPS
+
+            CTRL -> SkillsRepository: getSkillsList()
+            activate SkillsRepository
+
+            SkillsRepository --> CTRL : SkillsList
+            deactivate SkillsRepository
+
+            CTRL --> UI : SkillsList
+            deactivate CTRL
+
+        UI --> HRM : displays list of skills
+    deactivate UI
+
+    HRM -> UI : selects skills and assign to the collaborator
+    activate UI
+
+        UI --> HRM : shows all data and requests confirmation
+    deactivate UI
+
+    HRM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: assignSkillToCollaborator (collaborator, skillsToAssign)
+
+                activate CTRL
+
+                    CTRL -> CTRL: getCollaboratorByName (collaboratorName)
+                    activate CTRL
+
+                    CTRL -> REP: getInstance()
+                    activate REP
+
+                    REP --> CTRL: repositories
+                    deactivate REP
+
+                    CTRL -> REPS: getCollaboratorRepository()
+                    activate REPS
+
+                    REPS --> CTRL: collaboratorsRepository
+                    deactivate REPS
+
+                    CTRL -> collaboratorsRepository: getCollaboratorByName (collaboratorName)
+                    activate collaboratorsRepository
+
+                    collaboratorsRepository --> CTRL: collaborator
+                    deactivate collaboratorsRepository
+
+                    CTRL --> CTRL: collaborator
+                    deactivate CTRL
+
+                    CTRL -> COLLABORATOR: assignSkillToCollaborator (collaborator, skillsToAssign)
+                    activate COLLABORATOR
+
+                    COLLABORATOR -> COLLABORATOR : assignSkillToCollaborator
+
+                    COLLABORATOR --> CTRL : collaborator
+                    deactivate COLLABORATOR
+
+
+                CTRL --> UI: collaborator
+                deactivate CTRL
+            UI --> HRM: displays operation success
+    deactivate UI
+
+deactivate HRM
+
+@enduml

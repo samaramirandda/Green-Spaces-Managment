@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "FM" as FM
+participant ":System" as System
+
+activate FM
+
+    FM -> System : asks to register a new vehicle's check-up.
+    activate System
+
+        System --> FM : requests data (i.e. plate number, KMS, date)
+    deactivate System
+
+    FM -> System : types requested data
+    activate System
+
+        System --> FM : confirm that there is no longer a plate\n number equal to the one entered and,\n if so, print an error message
+    deactivate System
+
+        System --> FM : shows all data and requests confirmation
+    deactivate System
+
+    FM -> System : confirms data
+    activate System
+
+        System --> FM : displays operation success
+    deactivate System
+
+@enduml

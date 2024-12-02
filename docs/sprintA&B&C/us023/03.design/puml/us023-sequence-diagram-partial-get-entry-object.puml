@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AssignTeamController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as agenda
+
+autonumber 14
+
+ -> CTRL : getEntryByIndex(index)
+autonumber 14.1
+activate CTRL
+    group Get Entry Object
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> agenda: getEntryByIndex(index)
+            activate agenda
+
+            agenda --> CTRL: entry
+            deactivate agenda
+
+    end
+    autonumber 15
+    <-- CTRL  : entry
+deactivate CTRL
+
+@enduml

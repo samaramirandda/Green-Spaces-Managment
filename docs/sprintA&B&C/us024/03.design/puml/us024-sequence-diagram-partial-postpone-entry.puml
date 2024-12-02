@@ -1,0 +1,55 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "agenda:\nAgenda" as AGENDA
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "entry\n:Entry" as ENTRY
+
+autonumber 18
+
+ -> AGENDA : postponeEntry(i.e., new date)
+autonumber 18.1
+activate AGENDA
+    group Postpone Entry
+
+            AGENDA -> AGENDA: validateUser(email, entry)
+
+                AGENDA -> ENTRY: getGreenSpacesManager()
+                            activate ENTRY
+
+                            ENTRY --> AGENDA: greenSpacesManager
+                            deactivate ENTRY
+
+                            AGENDA -> USER: getEmail()
+                            activate USER
+
+                            USER --> AGENDA: email
+                            deactivate USER
+
+                                AGENDA --> AGENDA
+
+                                AGENDA -> ENTRY : setStartingDate(newStartingDate)
+                                activate ENTRY
+
+                                ENTRY --> AGENDA
+                                deactivate ENTRY
+
+                                AGENDA -> ENTRY : changeStatus(POSTPONED)
+                                activate ENTRY
+
+                            deactivate ENTRY
+                            AGENDA --> AGENDA
+                            deactivate AGENDA
+
+    end
+    autonumber 19
+    <-- AGENDA  : entry
+deactivate AGENDA
+
+@enduml

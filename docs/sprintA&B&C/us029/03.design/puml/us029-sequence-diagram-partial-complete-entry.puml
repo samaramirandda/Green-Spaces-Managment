@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "agenda:\nAgenda" as AGENDA
+participant "entry\n:Entry" as ENTRY
+participant "collaborator:\nCollaborator" as USER
+
+autonumber 18
+
+ -> AGENDA : CompleteEntry(entry, email)
+autonumber 18.1
+activate AGENDA
+    group Complete Entry
+
+            AGENDA -> ENTRY** : cancel(entry, email)
+
+                            AGENDA -> AGENDA: validateEntry (entry)
+                            activate AGENDA
+
+                            AGENDA --> AGENDA
+                            deactivate AGENDA
+
+                            AGENDA -> AGENDA: verifyCollaborator (email, entry)
+                            activate AGENDA
+
+                                AGENDA -> ENTRY: getTeamAssign()
+                                activate ENTRY
+
+                                ENTRY --> AGENDA: teamAssign
+                                deactivate ENTRY
+
+                                AGENDA -> ENTRY: getTeam()
+                                activate ENTRY
+
+                                ENTRY --> AGENDA: team
+                                deactivate ENTRY
+
+                                AGENDA -> USER: getEmail()
+                                activate USER
+
+                                USER --> AGENDA: email
+                                deactivate USER
+
+                            AGENDA --> AGENDA
+                            deactivate AGENDA
+
+    end
+    autonumber 19
+    <-- AGENDA  : entry
+deactivate AGENDA
+
+@enduml

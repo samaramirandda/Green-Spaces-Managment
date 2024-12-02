@@ -1,0 +1,98 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Fleet Manager" as FM
+participant ":CreateCheckUpUI" as UI
+participant ":CreateCheckUpController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "checkup\n:CheckUp" as CHECKUP
+participant "CheckUpRepository" as CHECKUPS
+
+activate FM
+
+        FM -> UI : asks to create a new check-up
+            |||
+
+        activate UI
+
+            create CTRL
+            UI -> CTRL** : create
+            |||
+
+            UI --> FM : requests data (plate number, KMS, date)
+            |||
+
+
+    FM -> UI : types requested data
+            |||
+
+        deactivate UI
+
+            UI --> FM : shows all data and requests confirmation
+            |||
+
+            activate UI
+    FM -> UI : submits data
+            deactivate UI
+            |||
+
+            UI -> CTRL : registerCheckUp(plate number, KMS , date)
+            activate CTRL
+            activate UI
+            |||
+
+                CTRL -> REP : getInstance()
+                activate REP
+            |||
+
+                    REP --> CTRL: repositories
+                deactivate CHECKUPS
+            |||
+
+                deactivate REP
+                CTRL -> REPS : getcheckUpRepository()
+            |||
+
+                activate REPS
+            |||
+
+                    REPS --> CTRL: checkUpRepository
+                deactivate REPS
+
+'
+            deactivate CTRL
+
+
+            |||
+
+        CTRL -> CHECKUPS : registerCheckUp(plate number, KMS, date)
+        activate CHECKUPS
+
+            |||
+            CHECKUPS -> CHECKUP**: registerCheckUp(plate number, KMS, date)
+            activate CHECKUPS
+            |||
+
+            ref over CHECKUPS
+             Register Check-Up
+            end ref
+
+            |||
+
+            CHECKUPS --> CTRL: check-up
+        deactivate CHECKUPS
+        activate CTRL
+
+            CTRL -> UI : check-up
+            UI --> FM: displays operation success
+    deactivate UI
+
+deactivate FM
+
+@enduml

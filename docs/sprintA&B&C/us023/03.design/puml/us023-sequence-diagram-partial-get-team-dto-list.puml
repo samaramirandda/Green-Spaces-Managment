@@ -1,0 +1,72 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AssignTeamController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "teamRepository:\nTeamRepository" as teamRepository
+participant ":TeamMapper" as teamMAPPER
+participant "teamDto\n:TeamDto" as teamDTO
+participant "teamListDto\n:List<TeamDto>" as teamListDTO
+
+autonumber 7
+
+ -> CTRL : getTeamsListDTO()
+autonumber 7.1
+activate CTRL
+    group Get Team Dto List
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getTeamRepository()
+            activate REPS
+
+            REPS --> CTRL: teamRepository
+            deactivate REPS
+
+            CTRL -> teamRepository: getTeamList()
+            activate teamRepository
+
+            teamRepository --> CTRL : teamList
+            deactivate teamRepository
+
+            CTRL -> teamMAPPER: toDTOList(teamList)
+            activate teamMAPPER
+
+                teamMAPPER -> teamListDTO** : create()
+
+                loop For each team in teamList
+
+                teamMAPPER -> teamDTO: teamToDTO(team)
+                activate teamDTO
+
+                teamDTO --> teamMAPPER: teamDto
+                deactivate teamDTO
+
+                teamMAPPER -> teamListDTO: add(teamDto)
+                activate teamListDTO
+
+                end
+
+                teamListDTO --> teamMAPPER: teamListDto
+                deactivate teamListDTO
+
+            teamMAPPER --> CTRL : teamListDto
+            deactivate teamMAPPER
+
+    end
+    autonumber 8
+    <-- CTRL  : teamListDto
+deactivate CTRL
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":AddTaskToDoListControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceREP
+
+autonumber 12
+
+ -> CTRL : getGreenSpaceByName(name)
+autonumber 12.1
+activate CTRL
+    group Get Green Space By Name
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceREP: getGreenSpaceByName(name)
+            activate greenSpaceREP
+
+            greenSpaceREP --> CTRL : greenSpace
+            deactivate greenSpaceREP
+
+    end
+    autonumber 13
+    <-- CTRL  : greenSpace
+deactivate CTRL
+
+@enduml

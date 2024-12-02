@@ -1,0 +1,39 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Human Resources Manager" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : asks to assign skills to a collaborator
+    activate System
+
+        System --> Employee : displays list of collaborators and asks to select one
+    deactivate System
+
+    Employee -> System : selects the collaborator
+    activate System
+
+        System --> Employee : displays list of skills
+    deactivate System
+
+    Employee -> System : selects skills and assign to the collaborator
+    activate System
+
+        System --> Employee : shows all data and requests confirmation
+    deactivate System
+
+    Employee -> System : confirms data
+    activate System
+
+        System --> Employee : displays operation success
+    deactivate System
+
+@enduml

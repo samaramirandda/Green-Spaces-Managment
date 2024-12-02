@@ -1,0 +1,83 @@
+
+
+
+Email Service: Dei Service
+From: gsm1@this.app
+To: daniel@this.app
+Subject: Assignment to a task
+Hello Daniel.
+You have been assigned a task that is in the Agenda, so you have become responsible for carrying it out.
+Below is the task information:
+Starting Date: Tue Nov 11 00:00:00 WET 2025
+Title: task
+Description: a
+Degree of Urgency: Medium
+Expected Duration: 12
+Type: Regular
+Green Space: Parque1
+Managed by: gsm1@this.app
+Status: Planned
+Team Assigned: Name: Daniel, Email: daniel@this.app
+Name: Diana, Email: diana@this.app
+
+
+Email Service: Dei Service
+From: gsm1@this.app
+To: diana@this.app
+Subject: Assignment to a task
+Hello Diana.
+You have been assigned a task that is in the Agenda, so you have become responsible for carrying it out.
+Below is the task information:
+Starting Date: Tue Nov 11 00:00:00 WET 2025
+Title: task
+Description: a
+Degree of Urgency: Medium
+Expected Duration: 12
+Type: Regular
+Green Space: Parque1
+Managed by: gsm1@this.app
+Status: Planned
+Team Assigned: Name: Daniel, Email: daniel@this.app
+Name: Diana, Email: diana@this.app
+
+
+Email Service: Dei Service
+From: gsm1@this.app
+To: daniel@this.app
+Subject: Assignment to a task
+Hello Daniel.
+You have been assigned a task that is in the Agenda, so you have become responsible for carrying it out.
+Below is the task information:
+Starting Date: Thu Nov 11 00:00:00 WET 2100
+Title: limpar
+Description: ad
+Degree of Urgency: Medium
+Expected Duration: 123
+Type: Regular
+Green Space: Parque1
+Managed by: gsm1@this.app
+Status: Planned
+Team Assigned: Name: Daniel, Email: daniel@this.app
+Name: Diana, Email: diana@this.app
+
+
+Email Service: Dei Service
+From: gsm1@this.app
+To: diana@this.app
+Subject: Assignment to a task
+Hello Diana.
+You have been assigned a task that is in the Agenda, so you have become responsible for carrying it out.
+Below is the task information:
+Starting Date: Thu Nov 11 00:00:00 WET 2100
+Title: limpar
+Description: ad
+Degree of Urgency: Medium
+Expected Duration: 123
+Type: Regular
+Green Space: Parque1
+Managed by: gsm1@this.app
+Status: Planned
+Team Assigned: Name: Daniel, Email: daniel@this.app
+Name: Diana, Email: diana@this.app
+
+

@@ -1,0 +1,246 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":AssignVehiclesUI" as UI
+participant ":AssignVehiclesController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as agenda
+participant ":EntryMapper" as entryMAPPER
+participant "entryDto\n:EntryDto" as entryDTO
+participant "entriesListDto\n:List<EntryDto>" as entriesListDTO
+participant "vehiclesToAdd\n:List<Vehicle>" as vehiclesToAddList
+participant "vehicleRepository:\nVehicleRepository" as vehicleRepository
+participant ":VehicleMapper" as vehicleMAPPER
+participant "vehicleDto\n:VehicleDto" as vehicleDTO
+participant "vehicleListDto\n:List<VehicleDto>" as vehicleListDTO
+participant "entry\n:Entry" as ENTRY
+participant "vehicle\n:Vehicle" as VEHICLE
+
+activate GSM
+
+    GSM -> UI : asks to assign one or more vehicles to an entry in the agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getEntriesListDTO()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> agenda: getEntriesList()
+            activate agenda
+
+            agenda --> CTRL : entriesList
+            deactivate agenda
+
+            CTRL -> entryMAPPER: toDTOList(entriesList)
+            activate entryMAPPER
+
+                entryMAPPER -> entriesListDTO** : create()
+
+                loop For each entry in entriesList
+
+                entryMAPPER -> entryDTO: entryToDTO(entry)
+                activate entryDTO
+
+                entryDTO --> entryMAPPER: entryDto
+                deactivate entryDTO
+
+                entryMAPPER -> entriesListDTO: add(entryDto)
+                activate entriesListDTO
+
+                end
+
+                entriesListDTO --> entryMAPPER: entriesListDto
+                deactivate entriesListDTO
+
+            entryMAPPER --> CTRL : entriesListDto
+            deactivate entryMAPPER
+
+        CTRL --> UI : entriesListDto
+        deactivate CTRL
+
+    UI --> GSM : shows agenda and asks to select an entry
+    deactivate UI
+
+    GSM -> UI : selects an entry in the agenda
+    activate UI
+
+        UI -> CTRL : getVehiclesListDTO()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getVehicleRepository()
+            activate REPS
+
+            REPS --> CTRL: vehicleRepository
+            deactivate REPS
+
+            CTRL -> vehicleRepository: getVehiclesList()
+            activate vehicleRepository
+
+            vehicleRepository --> CTRL : vehiclesList
+            deactivate vehicleRepository
+
+            CTRL -> vehicleMAPPER: toDTOList(vehiclesList)
+            activate vehicleMAPPER
+
+                vehicleMAPPER -> vehicleListDTO** : create()
+
+                loop For each vehicle in vehiclesList
+
+                vehicleMAPPER -> vehicleDTO: vehicleToDTO(vehicle)
+                activate vehicleDTO
+
+                vehicleDTO --> vehicleMAPPER: vehicleDto
+                deactivate vehicleDTO
+
+                vehicleMAPPER -> vehicleListDTO: add(vehicleDto)
+                activate vehicleListDTO
+
+                end
+
+                vehicleListDTO --> vehicleMAPPER: vehiclesListDto
+                deactivate vehicleListDTO
+
+            vehicleMAPPER --> CTRL : vehiclesListDto
+            deactivate vehicleMAPPER
+
+        CTRL --> UI : vehiclesListDto
+        deactivate CTRL
+
+    UI --> GSM : shows vehicles list and asks to select one or more
+    deactivate UI
+
+    GSM -> UI : selects one or more vehicles and assign to the entry in the agenda
+    activate UI
+
+    UI --> GSM : shows all data and requests confirmation
+    deactivate UI
+
+    GSM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: assignVehiclesToEntry(agendaIndex, vehiclesPlateNumbers)
+        activate CTRL
+
+            CTRL -> vehiclesToAddList**: create
+
+            loop For each vehiclePlateNumber in vehiclesPlateNumbers
+
+            CTRL -> CTRL: getVehicleByPlateNumber(vehiclePlateNumber)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getVehicleRepository()
+            activate REPS
+
+            REPS --> CTRL: vehicleRepository
+            deactivate REPS
+
+            CTRL -> vehicleRepository: getVehicleByPlateNumber(vehiclePlateNumber)
+            activate vehicleRepository
+
+            vehicleRepository --> CTRL: vehicle
+            deactivate vehicleRepository
+
+            CTRL --> CTRL: vehicle
+            deactivate CTRL
+
+            CTRL -> vehiclesToAddList: add(vehicle)
+            activate vehiclesToAddList
+
+            end loop
+
+            vehiclesToAddList --> CTRL: vehiclesToAdd
+            deactivate vehiclesToAddList
+
+            CTRL -> CTRL: getEntryByIndex(index)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> agenda: getEntryByIndex(index)
+            activate agenda
+
+            agenda --> CTRL: entry
+            deactivate agenda
+
+            CTRL --> CTRL: entry
+            deactivate CTRL
+
+            CTRL -> ENTRY: assignVehicles(vehiclesToAdd)
+            activate ENTRY
+
+            loop For each vehicle in vehicleToAdd
+
+            ENTRY -> ENTRY: getVehiclesAssign()
+            activate ENTRY
+
+            ENTRY -> ENTRY: add(vehicle)
+            activate ENTRY
+
+            ENTRY --> ENTRY
+            deactivate ENTRY
+
+            ENTRY --> ENTRY
+            deactivate ENTRY
+
+            ENTRY -> VEHICLE: setOccupiedVehicle(true)
+            activate VEHICLE
+
+            VEHICLE --> ENTRY
+            deactivate VEHICLE
+
+            end
+
+            ENTRY --> CTRL: entry
+            deactivate ENTRY
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> GSM: displays operation success
+    deactivate UI
+
+deactivate GSM
+
+@enduml

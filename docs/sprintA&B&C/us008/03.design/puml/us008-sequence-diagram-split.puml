@@ -1,0 +1,57 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Vehicle and Equipment\n Fleet Manager" as VFM
+participant ":VehicleNeedingMaintenanceUI " as UI
+participant ":VehicleNeedingMaintenanceController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant ":CheckUpRepository" as CheckUpRepository
+participant ":VehicleRepository" as VR
+participant ":VehicleNeedingMaintenanceRepository" as MaintenanceRep
+participant ":VehicleNeedingMaintenanceList" as MaintenanceList
+
+activate VFM
+
+        VFM -> UI : ask to list vehicles needing check-up
+
+        activate UI
+
+            UI -> CTRL** : create
+
+            activate CTRL
+
+                 ref over CTRL
+                        Get CheckUp and Vehicle List
+                 end ref
+
+                CTRL -> MaintenanceRep: getVehiclesNeedingMaintenanceRepository
+
+                                               activate MaintenanceRep
+
+                                              MaintenanceRep --> CTRL: vehiclesNeedingMaintenanceRepository
+
+                                                deactivate MaintenanceRep
+
+
+
+                              CTRL -> MaintenanceList: getVehiclesNeedingMaintenanceList (vehiclesList, checkUpList)
+
+                              activate MaintenanceList
+
+                              MaintenanceList --> CTRL: vehiclesNeedingMaintenanceList
+
+                              deactivate MaintenanceList
+
+                              CTRL -> UI : vehiclesNeedingMaintenanceList
+
+                          deactivate CTRL
+
+                UI -> VFM : displays the list of vehicles needing the check-up
+
+deactivate VFM
+
+@enduml

@@ -1,0 +1,68 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant "agenda:\nAgenda" as agenda
+participant "entry\n:Entry" as ENTRY
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "task\n:Task" as TASK
+
+autonumber 20
+-> agenda : addEntryAgenda(startingDate, task, email)
+
+autonumber 20.1
+
+activate agenda
+    group Create Entry
+                agenda -> ENTRY** : create(startingDate, task)
+
+                agenda -> agenda: addEntry (email, entry)
+                activate agenda
+
+                agenda -> agenda: validateEntry (entry)
+                activate agenda
+
+                agenda --> agenda
+                deactivate agenda
+
+                agenda -> agenda: validateUser (email, entry)
+                activate agenda
+
+                    agenda -> ENTRY: getGreenSpacesManager()
+                    activate ENTRY
+
+                    ENTRY --> agenda: greenSpacesManager
+                    deactivate ENTRY
+
+                    agenda -> USER: getEmail()
+                    activate USER
+
+                    USER --> agenda: email
+                    deactivate USER
+
+                agenda --> agenda
+                deactivate agenda
+
+                agenda -> ENTRY: getTask()
+                activate ENTRY
+
+                ENTRY --> agenda: task
+                deactivate ENTRY
+
+                agenda -> TASK: changeStatus(TaskStatus.PROCESSED)
+                activate TASK
+
+                TASK --> agenda
+                deactivate TASK
+
+                agenda --> agenda
+                deactivate agenda
+    end group
+
+    autonumber 21
+    <-- agenda : entry
+deactivate agenda
+
+
+@enduml

@@ -1,0 +1,101 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":PostponeEntryAgendaUI" as UI
+participant ":PostponeEntryAgendaController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+
+
+activate GSM
+
+    GSM -> UI : Asks to postpone an entry in the Agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getEntriesDTO()
+        activate CTRL
+                    ref over CTRL
+                        Get Entries Dto List
+                     end ref
+
+
+
+        CTRL --> UI : entriesListDto
+        deactivate CTRL
+
+    UI --> GSM : Shows list of entries
+    deactivate UI
+
+    GSM -> UI : selects an entry to postpone
+    activate UI
+
+    UI --> GSM : requests data (i.e., new date)
+    deactivate UI
+
+    GSM -> UI : types requested data (i.e., new date)
+    activate UI
+
+        UI -> CTRL: postponeEntry(i.e., new date)
+        activate CTRL
+
+            CTRL -> CTRL: getEntryByIndex(entryIndex)
+            activate CTRL
+
+                            ref over CTRL
+                                Get Entry By Index
+                            end ref
+
+
+            CTRL --> CTRL: entry
+            deactivate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+ref over CTRL
+                            Get GSM email
+                         end ref
+
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+                        activate REP
+
+                        REP --> CTRL: repositories
+                        deactivate REP
+
+                        CTRL -> REPS: getAgenda()
+                        activate REPS
+
+                        REPS --> CTRL: agenda
+                        deactivate REPS
+
+                        CTRL -> AGENDA: postponeEntry(i.e., new date)
+                        activate AGENDA
+
+                            ref over AGENDA
+                                Postpone Entry
+                            end ref
+
+                            AGENDA --> CTRL: entry
+                            deactivate AGENDA
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> GSM: displays operation success or failure
+    deactivate UI
+
+deactivate GSM
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class Skill {
+    - String name
+
+    + Skill(name)
+    + validateSkill(skill)
+}
+
+class HumanResourcesManager {
+    - name
+    + HumanResourcesManager(name)
+}
+
+class SkillRepository {
+    + addSkill(skill)
+    + isSkillInList(skill)
+    + registerSkill(name)
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getSkillRepository()
+}
+
+class RegisterSkillController {
+    + RegisterSkillController(skillRepository)
+    + registerSkill(name)
+}
+
+class RegisterSkillUI {
+}
+
+RegisterSkillUI ..> RegisterSkillController
+RegisterSkillController ..> Repositories : repositories
+Repositories --> Repositories: instance
+RegisterSkillController ..> SkillRepository : SkillRepository
+RegisterSkillController ..> Skill
+Repositories --> "1" SkillRepository
+HumanResourcesManager --> Skill
+SkillRepository --> "1..*" Skill
+
+
+
+@enduml

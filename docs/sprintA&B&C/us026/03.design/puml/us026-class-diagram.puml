@@ -1,0 +1,116 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class AssignVehiclesUI {
+}
+
+class AssignVehiclesController {
+    +AssignVehiclesController(agenda, vehicleRepository)
+    +assignVehiclesToEntry(agendaIndex, vehiclesPlateNumber)
+    -getEntryByIndex(index)
+    -getVehicleByPlateNumber(vehiclePlateNumber)
+    +getEntriesListDTO()
+    +getVehiclesListDTO()
+}
+
+class Agenda {
+    +getEntryByIndex(index)
+}
+
+class Entry {
+    -Date startingDate
+    -AgendaStatus status
+    -Task task
+    -Team teamAssign;
+    -GreenSpacesManager greenSpacesManager;
+    -List<Vehicle> vehiclesAssign
+    +Entry(startingDate, task)
+    +assignVehicles(vehiclesAssign)
+}
+
+class VehicleRepository {
+    +getVehicleByPlateNumber(plateNumber)
+}
+
+class Vehicle {
+    -String brand
+    -String model
+    -int tare
+    -int grossWeight
+    -int currentKm
+    -Date registerDate
+    -Date acquisitionDate
+    -int maintenanceCheckUpFrequency
+    -String plateNumber
+    -VehicleType type
+    -boolean occupiedVehicle
+    +Vehicle(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+    +getPlateNumber()
+    +setOccupiedVehicle(occupiedVehicle)
+}
+
+class Repositories {
+    - Repositories()
+    + getInstance() : Repositories
+    + getAgenda()
+    + getVehicleRepository()
+}
+
+class EntryDto {
+    -Date startingDate
+    -AgendaStatus status
+    -Task task
+    -Team teamAssign;
+    -GreenSpacesManager greenSpacesManager;
+    -List<Vehicle> vehiclesAssign;
+    +EntryDto(startingDate, status, task, teamAssign, greenSpacesManager, vehiclesAssign)
+}
+
+class EntryMapper {
+    +toDTOList(entriesList)
+    +entryToDTO(entry)
+}
+
+class VehicleDto {
+    -String brand
+    -String model
+    -int tare
+    -int grossWeight
+    -int currentKm
+    -Date registerDate
+    -Date acquisitionDate
+    -int maintenanceCheckUpFrequency
+    -String plateNumber
+    -VehicleType type
+    +VehicleDto(brand, model, tare, grossWeight, currentKm, registerDate, acquisitionDate, maintenanceCheckUpFrequency, plateNumber, type)
+}
+
+class VehicleMapper {
+    +toDTOList(vehiclesList)
+    +vehicleToDTO(vehicle)
+}
+
+AssignVehiclesUI ..> AssignVehiclesController
+AssignVehiclesController ..> Repositories: repositories
+AssignVehiclesController ..> Agenda: agenda
+AssignVehiclesController ..> VehicleRepository: vehicleRepository
+Repositories --> Repositories: instance
+Repositories --> "1" Agenda
+Repositories --> "1" VehicleRepository
+Agenda --> "*" Entry
+VehicleRepository --> "*" Vehicle
+Entry --> "*" Vehicle
+AssignVehiclesController ..> VehicleMapper
+VehicleMapper ..> VehicleDto
+AssignVehiclesController ..> EntryMapper
+EntryMapper ..> EntryDto
+
+@enduml

@@ -1,0 +1,77 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Collaborator" as COLLABORATOR
+participant ":ConsultTasksUI" as UI
+participant ":ConsultTasksController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+participant ":EntryMapper" as entryMAPPER
+
+activate COLLABORATOR
+
+COLLABORATOR -> UI : Requests to consult tasks between a date
+    activate UI
+
+
+    UI -> CTRL : getTasksForCollaboratorBetweenDates(startDate, endDate)
+        activate CTRL
+
+            CTRL -> CTRL: getEmailCollaboratorFromSession()
+
+            ref over CTRL
+                Get Collaborator from session
+            end ref
+
+            CTRL --> CTRL: email
+
+
+
+        CTRL -> REP : getInstance()
+        activate REP
+
+        REP --> CTRL: repositories
+        deactivate REP
+
+        CTRL -> REPS : getAgenda()
+        activate REPS
+
+        REPS --> CTRL: agenda
+        deactivate REPS
+
+        CTRL -> AGENDA : getTasksForCollaboratorBetweenDates (collaboratorEmail, startDate, endDate)
+        activate AGENDA
+
+            ref over AGENDA
+                Sort Tasks
+            end ref
+
+
+            AGENDA --> CTRL : tasksCollaborator
+            deactivate AGENDA
+
+            CTRL -> entryMAPPER: toDTOList(entryListDTO)
+            activate entryMAPPER
+
+            ref over entryMAPPER
+                Get Sorted Entry Spaces List
+            end ref
+
+            entryMAPPER --> CTRL : tasksCollaborator
+            deactivate entryMAPPER
+
+        CTRL --> UI : tasksCollaborator
+        deactivate CTRL
+
+    UI --> COLLABORATOR : Shows list of tasks
+    deactivate UI
+
+
+deactivate COLLABORATOR
+@enduml

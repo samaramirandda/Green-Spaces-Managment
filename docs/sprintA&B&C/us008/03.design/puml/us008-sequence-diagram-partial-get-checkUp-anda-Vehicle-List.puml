@@ -1,0 +1,95 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+participant ":VehicleNeedingMaintenanceController" as CTRL
+participant ":Repositories" as RepositorySingleton
+participant ":CheckUpRepository" as CheckUpRepository
+participant ":VehicleRepository" as VR
+participant ":VehicleNeedingMaintenanceRepository" as MaintenanceRep
+participant ":VehicleNeedingMaintenanceList" as MaintenanceList
+
+        autonumber2
+
+            -> CTRL** : create
+
+            group get checkUp and Vehicle List
+            activate CTRL
+
+                 activate CTRL
+
+                    autonumber 2.1
+
+
+                                 CTRL -> RepositorySingleton : getInstance()
+                                 activate RepositorySingleton
+
+                                     RepositorySingleton --> CTRL: repositories
+
+                                 deactivate RepositorySingleton
+
+                                 CTRL -> RepositorySingleton : getCheckUpRepository()
+
+                                 activate RepositorySingleton
+
+                                     RepositorySingleton --> CTRL: CheckUpRepository
+
+                                deactivate RepositorySingleton
+
+                                     CTRL -> CheckUpRepository : getCheckUpsList()
+
+                                activate CheckUpRepository
+
+                                CheckUpRepository --> CTRL: CheckUpList
+
+                                deactivate CheckUpRepository
+
+                                 deactivate CheckUpRepository
+
+                                               deactivate RepositorySingleton
+
+                                               CTRL -> RepositorySingleton : getVehicleRepository()
+
+                                               activate RepositorySingleton
+
+                                                   RepositorySingleton --> CTRL: VehicleRepository
+
+                                              deactivate RepositorySingleton
+
+                                               CTRL -> VR : getVehiclesList()
+
+                                               activate VR
+
+                                               VR --> CTRL: VehiclesList
+
+                                               deactivate VR
+
+                                               end
+
+                                               autonumber 3
+
+                                              CTRL -> MaintenanceRep: getVehiclesNeedingMaintenanceRepository
+
+                                               activate MaintenanceRep
+
+                                              MaintenanceRep --> CTRL: vehiclesNeedingMaintenanceRepository
+
+                                                deactivate MaintenanceRep
+
+                              CTRL -> MaintenanceList: getVehiclesNeedingMaintenanceList (vehiclesList, checkUpList)
+
+                              activate MaintenanceList
+
+                              MaintenanceList --> CTRL: vehiclesNeedingMaintenanceList
+
+                              deactivate MaintenanceList
+
+                              <-- CTRL : vehiclesNeedingMaintenanceList
+
+                    deactivate CTRL
+
+
+@enduml

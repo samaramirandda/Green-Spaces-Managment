@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+
+
+'hide footbox
+participant ":CreateTaskController" as CTRL
+participant ":ApplicationSession" as _APP
+participant "appSession\n:ApplicationSession" as APP
+participant "currentSession\n:UserSession" as SESSAO
+participant ":Repositories" as RepositorySingleton
+participant "repositories\n:Repositories" as PLAT
+participant "organizationRepository:\nOrganizationRepository" as OrganizationRepository
+participant "organization\n:Organization" as ORG
+
+autonumber 15
+-> CTRL : getVehicleByPlateNumber(vehiclePlateNumber)
+autonumber 15.1
+activate CTRL
+
+    group Get Vehicle Object
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getVehicleRepository()
+            activate REPS
+
+            REPS --> CTRL: vehicleRepository
+            deactivate REPS
+
+            CTRL -> vehicleRepository: getVehicleByPlateNumber(vehiclePlateNumber)
+            activate vehicleRepository
+
+            vehicleRepository --> CTRL: vehicle
+            deactivate vehicleRepository
+    end
+    autonumber 16
+    <-- CTRL : vehicle
+deactivate CTRL
+
+@enduml

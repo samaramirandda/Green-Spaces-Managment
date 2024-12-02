@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative Two
+
+autonumber
+
+actor "HRM" as HRM
+participant ":System" as System
+
+activate HRM
+
+    HRM -> System : asks to create a new job
+    activate System
+
+        System --> HRM : shows all job names existing to date or asks to create one
+    deactivate System
+
+    HRM -> System : selects an option
+    activate System
+
+        System --> HRM : requests data (i.e. name and description)
+    deactivate System
+
+    HRM -> System : types requested data
+    activate System
+
+        System --> HRM : shows all data and requests confirmation
+    deactivate System
+
+    HRM -> System : confirms data
+    activate System
+
+        System --> HRM : asks if the user wants to add another job
+    deactivate System
+
+
+    HRM -> System : answer yes or no
+    activate System
+
+            System --> HRM : If the user answers yes the operation restarts,\nif the user answers no the program is closed
+        deactivate System
+@enduml

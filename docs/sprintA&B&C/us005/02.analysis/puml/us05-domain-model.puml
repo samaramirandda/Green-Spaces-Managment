@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model
+
+class HumanResourcesManager {
+    name
+}
+
+class Team {
+    maxSize
+    numberOfCollaborators
+    skillsNeeded
+}
+
+class Collaborator {
+    name
+    birthday
+    admissionDate
+    address
+    phoneNumber
+    email
+    IDDocType
+    IDNumber
+}
+
+class Skill {
+    name
+}
+
+HumanResourcesManager "1" - "1..*" Team : generate >
+HumanResourcesManager "1" - "1..*" Collaborator : register >
+Team "1" - "2..*" Collaborator : has >
+Collaborator "0..*" - "1..*" Skill : has >
+HumanResourcesManager "1" - "1..*" Skill : register >
+
+@enduml

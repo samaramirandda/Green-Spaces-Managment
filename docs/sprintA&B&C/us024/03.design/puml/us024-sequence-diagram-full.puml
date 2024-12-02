@@ -1,0 +1,216 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":PostponeEntryAgendaUI" as UI
+participant ":PostponeEntryAgendaController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "agenda:\nAgenda" as AGENDA
+participant ":EntryMapper" as entryMAPPER
+participant "entryDto\n:EntryDto" as entryDTO
+participant "entryListDto\n:List<entryDto>" as entryListDTO
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "entryList:\nEntryList" as entryList
+participant "entry:\nEntry" as ENTRY
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+
+activate GSM
+
+    GSM -> UI : Asks to postpone an entry in the Agenda
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getEntriesDTO()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: getEntriesList()
+            activate AGENDA
+
+            AGENDA --> CTRL : entriesList
+            deactivate AGENDA
+
+            CTRL -> entryMAPPER: toDTOList(entriesList)
+            activate entryMAPPER
+
+                entryMAPPER -> entryListDTO** : create()
+
+                loop For each entry in entriesList
+
+                entryMAPPER -> entryDTO: entryToDTO(entry)
+                activate entryDTO
+
+                entryDTO --> entryMAPPER: entryDto
+                deactivate entryDTO
+
+                entryMAPPER -> entryListDTO: add(entryDto)
+                activate entryListDTO
+
+                end
+
+                entryListDTO --> entryMAPPER: entriesListDto
+                deactivate entryListDTO
+
+            entryMAPPER --> CTRL : entriesListDto
+            deactivate entryMAPPER
+
+        CTRL --> UI : entriesListDto
+        deactivate CTRL
+
+    UI --> GSM : Shows list of entries
+    deactivate UI
+
+    GSM -> UI : selects an entry to postpone
+    activate UI
+
+    UI --> GSM : requests data (i.e., new date)
+    deactivate UI
+
+    GSM -> UI : types requested data (entry index, new starting date)
+    activate UI
+
+        UI -> CTRL: postponeEntry(entryIndex, newStartingDate)
+        activate CTRL
+
+            CTRL -> CTRL: getEntryByIndex(entryIndex)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: getEntryByIndex(entryIndex)
+            activate AGENDA
+
+            AGENDA --> CTRL: entry
+            deactivate AGENDA
+
+            CTRL --> CTRL: entry
+            deactivate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+            activate REPS
+
+            REPS --> CTRL: authenticationRepository
+            deactivate REPS
+
+            CTRL -> authentication: getCurrentUserSession()
+            activate authentication
+
+            authentication --> CTRL: authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+            activate authFacade
+
+            authFacade --> CTRL: userSession
+            deactivate authFacade
+
+            CTRL -> user: getUserId()
+            activate user
+
+            user --> CTRL: email
+            deactivate user
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAgenda()
+            activate REPS
+
+            REPS --> CTRL: agenda
+            deactivate REPS
+
+            CTRL -> AGENDA: postponeEntry(i.e., new date)
+            activate AGENDA
+
+
+                            activate AGENDA
+
+                                AGENDA -> AGENDA: validateUser(email, entry)
+                                activate AGENDA
+
+                                AGENDA -> ENTRY: getGreenSpacesManager()
+                                activate ENTRY
+
+                                ENTRY --> AGENDA: greenSpacesManager
+                                deactivate ENTRY
+
+                                AGENDA -> USER: getEmail()
+                                activate USER
+
+                                USER --> AGENDA: email
+                                deactivate USER
+
+                                AGENDA --> AGENDA
+                                deactivate AGENDA
+
+                                AGENDA -> ENTRY : setStartingDate(newStartingDate)
+                                activate ENTRY
+
+                                ENTRY --> AGENDA
+                                deactivate ENTRY
+
+                                AGENDA -> ENTRY : changeStatus(POSTPONED)
+                                activate ENTRY
+
+                                ENTRY --> AGENDA
+                                deactivate ENTRY
+
+
+                                AGENDA --> CTRL: entry
+                                deactivate AGENDA
+
+            deactivate AGENDA
+
+        CTRL --> UI: entry
+        deactivate CTRL
+
+    UI --> GSM: displays operation success or failure
+    deactivate UI
+
+deactivate GSM
+
+@enduml

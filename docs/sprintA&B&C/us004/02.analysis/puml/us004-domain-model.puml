@@ -1,0 +1,38 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+title Domain Model
+
+class Collaborator {
+    name
+    birthday
+    admissionDate
+    address
+    phoneNumber
+    email
+    IDDocType
+    IDNumber
+}
+
+class HumanResourcesManager {
+    name
+}
+
+class Skill {
+    name
+}
+
+HumanResourcesManager "1" - "1..*" Skill : selects >
+Collaborator "1" - "1..*" Skill: has >
+Skill "1" -- "0..*" Collaborator : assigned to >
+
+@enduml

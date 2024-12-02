@@ -1,0 +1,217 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":AddTaskToDoListUI" as UI
+participant ":AddTaskToDoListControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceREP
+participant ":GreenSpaceMapper" as greenSpaceMAPPER
+participant "GreenSpaceDto\n:GreenSpaceDto" as greenSpaceDTO
+participant "GreenSpacesListDto\n:List<greenSpaceDto>" as greenSpacesListDTO
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "toDoList:\nToDoList" as toDoList
+participant "GreenSpace:\nGreenSpace" as greenSpace
+participant "greenSpacesManager:\nGreen Spaces Manager" as USER
+participant "task\n:Task" as TASK
+
+activate GSM
+
+    GSM -> UI : Asks to add a new task to the To-Do List
+    activate UI
+
+        UI -> CTRL** : create
+
+        UI -> CTRL : getGreenSpacesDTO()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceREP: getGreenSpacesList()
+            activate greenSpaceREP
+
+            greenSpaceREP --> CTRL : greenSpacesList
+            deactivate greenSpaceREP
+
+            CTRL -> greenSpaceMAPPER: toDTOList(greenSpacesList)
+            activate greenSpaceMAPPER
+
+                greenSpaceMAPPER -> greenSpacesListDTO** : create()
+
+                loop For each greenSpace in greenSpacesList
+
+                greenSpaceMAPPER -> greenSpaceDTO: greenSpaceToDTO(greenSpace)
+                activate greenSpaceDTO
+
+                greenSpaceDTO --> greenSpaceMAPPER: greenSpaceDto
+                deactivate greenSpaceDTO
+
+                greenSpaceMAPPER -> greenSpacesListDTO: add(GreenSpaceDto)
+                activate greenSpacesListDTO
+
+                end
+
+                greenSpacesListDTO --> greenSpaceMAPPER: greenSpacesListDto
+                deactivate greenSpacesListDTO
+
+            greenSpaceMAPPER --> CTRL : greenSpacesListDto
+            deactivate greenSpaceMAPPER
+
+        CTRL --> UI : greenSpacesListDto
+        deactivate CTRL
+
+    UI --> GSM : Shows list of green spaces
+    deactivate UI
+
+    GSM -> UI : selects a green space
+    activate UI
+
+    UI --> GSM : requests data (title, descritpion, degreeOfUrgency, expectedDurationTime, taskType, greenSpace)
+    deactivate UI
+
+    GSM -> UI : types requested data
+    activate UI
+
+    UI --> GSM : shows all data and requests confirmation
+    deactivate UI
+
+    GSM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: addTaskToDoList(title, description, degreeOfUrgency, expectedDurationTime, taskType, greenSpace)
+        activate CTRL
+
+            CTRL -> CTRL: getGreenSpaceByName(name)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceREP: getGreenSpaceByName(name)
+            activate greenSpaceREP
+
+            greenSpaceREP --> CTRL: greenSpace
+            deactivate greenSpaceREP
+
+            CTRL --> CTRL: greenSpace
+            deactivate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+            activate REPS
+
+            REPS --> CTRL: authenticationRepository
+            deactivate REPS
+
+            CTRL -> authentication: getCurrentUserSession()
+            activate authentication
+
+            authentication --> CTRL: authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+            activate authFacade
+
+            authFacade --> CTRL: userSession
+            deactivate authFacade
+
+            CTRL -> user: getUserId()
+            activate user
+
+            user --> CTRL: email
+            deactivate user
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getToDoList()
+            activate REPS
+
+            REPS --> CTRL: toDoList
+            deactivate REPS
+
+            CTRL -> toDoList: addTaskToDoList(title, description, degreeOfUrgency, expectedDurationTime, taskType, greenSpace, email)
+            activate toDoList
+
+                toDoList -> TASK** : create(title, description, degreeOfUrgency, expectedDurationTime, taskType, greenSpace)
+
+                toDoList -> toDoList: addTask (email, task)
+                activate toDoList
+
+                toDoList -> toDoList: validateTask (task)
+                activate toDoList
+
+                toDoList --> toDoList
+                deactivate toDoList
+
+                toDoList -> toDoList: validateUser (email, task)
+                activate toDoList
+
+                    toDoList -> TASK: getGreenSpacesManager()
+                    activate TASK
+
+                    TASK --> toDoList: greenSpacesManager
+                    deactivate TASK
+
+                    toDoList -> USER: getEmail()
+                    activate USER
+
+                    USER --> toDoList: email
+                    deactivate USER
+
+                toDoList --> toDoList
+                deactivate toDoList
+
+            toDoList --> CTRL: task
+            deactivate toDoList
+
+        CTRL --> UI: task
+        deactivate CTRL
+
+    UI --> GSM: displays operation success
+    deactivate UI
+
+deactivate GSM
+
+@enduml

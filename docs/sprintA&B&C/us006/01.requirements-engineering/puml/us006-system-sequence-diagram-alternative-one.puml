@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - Alternative One
+
+autonumber
+
+actor "Fleet\nManager" as FM
+participant ":System" as System
+
+activate FM
+
+    FM -> System : asks to register a new vehicle
+    activate System
+
+        System --> FM : requests data (i.e. Brand, Model, Type, Tare, Gross Weight, Current Km, Register Date, Acquisition Date, Maintenance/Check-up Frequency, Plate Number)
+    deactivate System
+
+    FM -> System : types/selects requested data
+    activate System
+
+        System --> FM : shows all data and requests confirmation
+    deactivate System
+
+    FM -> System : confirms data
+    activate System
+
+        System --> FM : displays operation success
+    deactivate System
+
+@enduml

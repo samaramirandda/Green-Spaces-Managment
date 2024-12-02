@@ -1,0 +1,46 @@
+    @startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+
+hide methods
+
+title Domain Model
+
+class FM {
+    name
+
+}
+
+class Checkup {
+    ID
+    plate number
+     KMS
+     date
+}
+
+class Vehicle {
+    ID
+    Brand
+    Model
+    Type
+    Tare
+    Gross Weight
+    Current Km
+    Register Date
+    Acquisition Date
+    Maintenance
+}
+
+'Organization "1" - "1" FM : has >
+FM "1" - "1..*" Vehicle : register >
+FM "1" - "1..*" Checkup : register >
+Vehicle "0..*" -- "1" Checkup : needs >
+
+@enduml

@@ -1,0 +1,118 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Green Spaces\nManager" as GSM
+participant ":RegisterGreenSpaceUI" as UI
+participant ":RegisterGreenSpaceController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceRepository
+participant "greenSpace\n:GreenSpace" as GREENSPACE
+
+activate GSM
+
+    GSM -> UI : asks to register a new green space
+    activate UI
+
+        UI -> CTRL** : create
+
+    UI --> GSM : requests data
+    deactivate UI
+
+    GSM -> UI : types/selects requested data
+    activate UI
+
+    UI --> GSM : shows all data and requests confirmation
+    deactivate UI
+
+    GSM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: registerGreenSpace(name, address, type, area)
+        activate CTRL
+
+            CTRL -> CTRL: getGSMFromSession()
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+            activate REPS
+
+            REPS --> CTRL: authenticationRepository
+            deactivate REPS
+
+            CTRL -> authentication: getCurrentUserSession()
+            activate authentication
+
+            authentication --> CTRL: authenticationFacade
+            deactivate authentication
+
+            CTRL -> authFacade: getCurrentUserSession()
+            activate authFacade
+
+            authFacade --> CTRL: userSession
+            deactivate authFacade
+
+            CTRL -> user: getUserId()
+            activate user
+
+            user --> CTRL: email
+            deactivate user
+
+            CTRL --> CTRL: email
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getGreenSpaceRepository()
+            activate REPS
+
+            REPS --> CTRL: greenSpaceRepository
+            deactivate REPS
+
+            CTRL -> greenSpaceRepository: registerGreenSpace(name ,address, type, area, greenSpacesManager)
+            activate greenSpaceRepository
+
+                greenSpaceRepository -> GREENSPACE** : register(name ,address, type, area, greenSpacesManager)
+
+                greenSpaceRepository -> greenSpaceRepository: addGreenSpace (greenSpace)
+                activate greenSpaceRepository
+
+                greenSpaceRepository -> greenSpaceRepository: validateGreenSpace (greenSpace)
+                activate greenSpaceRepository
+
+                greenSpaceRepository --> greenSpaceRepository
+                deactivate greenSpaceRepository
+
+                greenSpaceRepository --> greenSpaceRepository
+                deactivate greenSpaceRepository
+
+            greenSpaceRepository --> CTRL: greenSpace
+            deactivate greenSpaceRepository
+
+        CTRL --> UI: greenSpace
+        deactivate CTRL
+
+    UI --> GSM : displays operation success
+    deactivate UI
+
+deactivate GSM
+
+@enduml

@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+class Organization {
+}
+
+class GreenSpaceManager {
+    name
+}
+
+class ToDoList {
+    tasksList
+}
+
+class Task {
+    title
+    description
+    UrgencyDegree
+    expectedDuration
+    type
+    taskStatus
+    greenSpace
+}
+
+Organization "1" -- "1..*" GreenSpaceManager : has >
+Organization "1" -- "1" ToDoList : has >
+ToDoList "1" -- "1..*" Task : has >
+GreenSpaceManager "1" -- "1" Task : selects >
+@enduml

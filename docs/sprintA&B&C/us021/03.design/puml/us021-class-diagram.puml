@@ -1,0 +1,123 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class AddTaskToDoListUI {
+}
+
+class AddTaskToDoListController {
+    +AddTaskToDoListController(greenSpaceRepository, toDoList, authenticationRepository)
+    +addTaskToDoList(title, description, degreeOfUrgency, expectedDuration, taskType, greenSpace)
+    -getGreenSpaceByName(name)
+    -getGSMFromSession()
+    +getGreenSpacesListDTO()
+}
+
+class ToDoList {
+    +addTaskToDoList(title, description, emergencyDegree, expectedDuration, taskType, greenSpace, gsmFromSession)
+    +addTask(gsmFromSession, task)
+}
+
+class GreenSpace {
+    -String name
+        -Adress adress
+        -GreenSpaceType type
+        -double area
+        -GreenSpacesManager greenSpacesManager
+        +GreenSpace(name, adress, type, area, greenSpacesManager)
+}
+
+class Repositories{
+    - Repositories()
+    + getInstance() : Repositories
+    + getToDoList()
+    + getGreenSpaceRepository()
+    + getAuthenticationRepository()
+}
+
+enum TaskStatus {
+    PENDING
+    PROCESSED
+}
+
+class Task {
+    -String title
+    -String description
+    -EmergencyDegree degreeOfUrgency
+    -int expectedDuration
+    -TaskType type
+    -GreenSpace greenSpace
+    +Task(title, description, degreeOfUrgency, expectedDuration, type, greenSpace)
+    +changeStatus(status)
+}
+
+class GreenSpaceRepository {
+    +getGreenSpacesList()
+    +getGreenSpaceByName(name)
+}
+
+class AuthenticationRepository {
+    +getCurrentUserSession()
+}
+
+class UserSession {
+    +getUserId()
+}
+
+class GreenSpaceManager {
+    -String email
+    +GreenSpaceManager(email)
+}
+
+enum TaskType {
+    REGULAR
+    OCCASIONAL
+}
+
+enum EmergencyDegree {
+    HIGH
+    MEDIUM
+    LOW
+}
+
+class GreenSpaceDTO {
+    -String name
+    -Adress adress
+    -GreenSpaceType type
+    -double area
+    -GreenSpacesManager greenSpacesManager
+    +GreenSpaceDTO(name, adress, type, area, greenSpacesManager)
+}
+
+class GreenSpaceMapper {
+    +toDTOList(greenSpacesList)
+    +greenSpaceToDTO(greenSpace)
+}
+
+AddTaskToDoListUI ..> AddTaskToDoListController
+AddTaskToDoListController ..> Repositories: repositories
+AddTaskToDoListController ..> ToDoList: toDoList
+AddTaskToDoListController ..> AuthenticationRepository: authenticationRepository
+AddTaskToDoListController ..> GreenSpaceRepository: greenSpaceRepository
+GreenSpaceRepository ..> GreenSpace
+ToDoList ..> Task
+AuthenticationRepository ..> UserSession
+Repositories --> Repositories: instance
+Repositories --> "1" ToDoList
+Repositories --> "1" AuthenticationRepository
+Repositories --> "1" GreenSpaceRepository
+Task --> "1" EmergencyDegree
+Task --> "1" TaskStatus
+Task --> "1" GreenSpaceManager
+Task --> "1" TaskType
+AddTaskToDoListController ..> GreenSpaceMapper
+GreenSpaceMapper ..> GreenSpaceDTO
+
+@enduml

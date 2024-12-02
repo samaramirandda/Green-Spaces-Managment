@@ -1,0 +1,59 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class CheckUpRepository{
+    -List<CheckUp> checkUpList;
+}
+
+class VehicleRepository{
+    -List<Vehicle> vehiclesList;
+}
+
+class VehicleNeedingMaintenanceRepository{
+    + getVehiclesNeedingMaintenanceList(allVehicles, allCheckUps)
+    - needsCheckUp(vehicle, allCheckUps)
+    - getLastCheckUpKms(vehicle, allCheckUps)
+}
+
+class Repositories{
+    - Repositories()
+    + getInstance() : Repositories
+    + getVehicleRepository()
+    + getCheckUpRepository()
+    + getVehicleNeedingMaintenanceRepository()
+}
+
+class VehicleNeedingMaintenanceController{
+     +VehicleNeedingMaintenanceController( vehicleNeedingMaintenanceRepository, checkUpRepository, vehicleRepository)
+    -getVehicleRepository()
+    -getCheckUpRepository()
+    +getVehiclesNeedingMaintenanceList()
+}
+
+class VehicleNeedingMaintenanceUI{
+}
+
+VehicleNeedingMaintenanceUI ..> VehicleNeedingMaintenanceController
+
+VehicleNeedingMaintenanceController ..> Repositories: repositories
+VehicleNeedingMaintenanceController ..> CheckUpRepository: CheckUpRepository
+VehicleNeedingMaintenanceController ..> VehicleRepository: VehicleRepository
+VehicleNeedingMaintenanceController ..> VehicleNeedingMaintenanceRepository: VehicleNeedingMaintenanceRepository
+
+Repositories --> "1"CheckUpRepository
+Repositories --> "1"VehicleRepository
+Repositories --> "1"VehicleNeedingMaintenanceRepository
+Repositories --> Repositories: instance
+
+VehicleNeedingMaintenanceRepository --> "1"CheckUpRepository
+VehicleNeedingMaintenanceRepository --> "1"VehicleRepository
+
+@enduml

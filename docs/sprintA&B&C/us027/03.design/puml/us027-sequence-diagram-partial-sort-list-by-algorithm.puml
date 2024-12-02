@@ -1,0 +1,86 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant "greenSpaceRepository:\nGreenSpaceRepository" as greenSpaceRepository
+participant "greenSpacesListByGSM\n:List<GreenSpace>" as greenSpacesListByGSM
+participant ":GreenSpacesManager" as GreenSpacesManager
+participant ":Algorithm1" as algorithm
+
+autonumber 9
+
+ -> greenSpaceRepository : sortListByAlgorithm(gsmFromSession)
+autonumber 9.1
+activate greenSpaceRepository
+    group Sort List By Algorithm
+
+        greenSpaceRepository -> greenSpaceRepository: getGreenSpaceListByGSM(gsmFromSession)
+            activate greenSpaceRepository
+
+
+        greenSpaceRepository -> greenSpacesListByGSM**: create
+
+            greenSpaceRepository -> GreenSpacesManager: getGreenSpacesManager()
+            activate GreenSpacesManager
+
+            GreenSpacesManager -> greenSpaceRepository: greenSpacesManager
+            deactivate GreenSpacesManager
+
+            opt GreenSpacesManager == gsmFromSession
+
+            greenSpaceRepository -> greenSpacesListByGSM: add(greenSpace)
+            activate greenSpacesListByGSM
+
+            end loop
+
+            greenSpacesListByGSM --> greenSpaceRepository: greenSpacesListByGSM
+            deactivate greenSpacesListByGSM
+
+            greenSpaceRepository --> greenSpaceRepository: greenSpacesListByGSM
+            deactivate greenSpaceRepository
+
+        greenSpaceRepository -> ApplicationSession: getSortingAlgorithm()
+            activate ApplicationSession
+
+            ApplicationSession -> ApplicationSession: getAlgorithm()
+            activate ApplicationSession
+
+            ApplicationSession -> Properties: getProperty(key, defaultValue)
+            activate Properties
+
+            Properties --> ApplicationSession: algorithm
+            deactivate Properties
+
+            ApplicationSession --> ApplicationSession: algorithm
+            deactivate ApplicationSession
+
+            ApplicationSession --> greenSpaceRepository: algorithm
+            deactivate ApplicationSession
+
+            opt Algorithm is Algoritmo1
+
+            greenSpaceRepository -> algorithm: sort (greenSpacesListByGSM)
+            activate algorithm
+
+            algorithm -> algorithm: sortList(greenSpacesListByGSM)
+            activate algorithm
+
+            algorithm --> algorithm
+            deactivate algorithm
+
+            algorithm --> greenSpaceRepository: sortedGreenSpacesListByGSM
+            deactivate algorithm
+
+            end
+
+    end
+    autonumber 10
+    <-- greenSpaceRepository  : sortedGreenSpacesListByGsm
+deactivate greenSpaceRepository
+
+@enduml

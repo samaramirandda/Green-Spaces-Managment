@@ -1,0 +1,134 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Human Resources\nManager" as HRM
+participant ":RegisterCollaboratorUI" as UI
+participant ":RegisterCollaboratorControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "jobRepository:\njobRepository" as jobRepository
+participant "collaboratorRepository:\ncollaboratorRepository" as collaboratorRepository
+participant "collaborator\n:Collaborator" as COLLABORATOR
+
+activate HRM
+
+    HRM -> UI : asks to register a new collaborator
+    activate UI
+
+        UI -> CTRL** : create
+
+    UI --> HRM : requests data
+    deactivate UI
+
+    HRM -> UI : types/selects requested data
+    activate UI
+
+        UI -> CTRL : getJobsList()
+        activate CTRL
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getJobRepository()
+            activate REPS
+
+            REPS --> CTRL: JobRepository
+            deactivate REPS
+
+            CTRL -> jobRepository: getJobsList()
+            activate jobRepository
+
+            jobRepository --> CTRL : JobsList
+            deactivate jobRepository
+
+            CTRL --> UI : JobsList
+            deactivate CTRL
+
+    UI --> HRM : shows the list of jobs and asks to select one
+    deactivate UI
+
+    HRM -> UI : selects the job
+    activate UI
+
+    UI --> HRM : shows all data and requests confirmation
+    deactivate UI
+
+    HRM -> UI : confirms data
+    activate UI
+
+        UI -> CTRL: registerCollaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, jobName)
+        activate CTRL
+
+            CTRL -> CTRL: getJobsByName(jobName)
+            activate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getJobRepository()
+            activate REPS
+
+            REPS --> CTRL: jobRepository
+            deactivate REPS
+
+            CTRL -> jobRepository: getJobsByName(jobName)
+            activate jobRepository
+
+            jobRepository --> CTRL: job
+            deactivate jobRepository
+
+            CTRL --> CTRL: job
+            deactivate CTRL
+
+            CTRL -> REP: getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getCollaboratorRepository()
+            activate REPS
+
+            REPS --> CTRL: collaboratorRepository
+            deactivate REPS
+
+            CTRL -> collaboratorRepository: registerCollaborator(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, job)
+            activate collaboratorRepository
+
+                collaboratorRepository -> COLLABORATOR** : register(name, birthday, admissionDate, address, phoneNumber, email, idDocType, idNumber, job)
+
+                collaboratorRepository -> collaboratorRepository: addCollaborator (colaborator)
+                activate collaboratorRepository
+
+                collaboratorRepository -> collaboratorRepository: validateCollaborator (colaborator)
+                activate collaboratorRepository
+
+                collaboratorRepository --> collaboratorRepository
+                deactivate collaboratorRepository
+
+                collaboratorRepository --> collaboratorRepository
+                deactivate collaboratorRepository
+
+            collaboratorRepository --> CTRL: collaborator
+            deactivate collaboratorRepository
+
+        CTRL --> UI: collaborator
+        deactivate CTRL
+
+    UI --> HRM: displays operation success
+    deactivate UI
+
+deactivate HRM
+
+@enduml

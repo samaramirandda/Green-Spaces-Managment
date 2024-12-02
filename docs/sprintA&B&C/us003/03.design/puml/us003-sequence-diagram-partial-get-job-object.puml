@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":RegisterCollaboratorControlller" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "jobRepository:\njobRepository" as jobRepository
+
+autonumber 12
+
+ -> CTRL : getJobsByName(jobName)
+autonumber 12.1
+activate CTRL
+    group Get Job Object
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS : getJobRepository()
+            activate REPS
+
+            REPS --> CTRL: JobRepository
+            deactivate REPS
+
+            CTRL -> jobRepository: getJobsByName(jobName)
+            activate jobRepository
+
+            jobRepository --> CTRL : job
+            deactivate jobRepository
+
+    end
+    autonumber 13
+    <-- CTRL  : job
+deactivate CTRL
+
+@enduml

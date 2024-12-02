@@ -1,0 +1,77 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":ConsultTasksController" as CTRL
+participant "agenda:\nAgenda" as AGENDA
+participant ":EntryMapper" as entryMAPPER
+participant ":Repositories" as REP
+
+participant ":Repositories" as RepositorySingleton
+participant "user:\nUserSession" as user
+participant "repositories\n:Repositories" as REPS
+participant "tasksCollaborator\n:List<Entry>"
+participant "entry:\nEntry" as ENTRY
+
+autonumber 9
+-> AGENDA : getTaskCategoryByDescription(taskCategoryDescription)
+
+autonumber 9.1
+
+activate AGENDA
+    group Get Sorted Task Spaces
+        AGENDA -> "tasksCollaborator\n:List<Entry>" : create
+        activate "tasksCollaborator\n:List<Entry>"
+
+        loop For each entry in agenda
+
+                AGENDA -> ENTRY : getStartingDate()
+                activate ENTRY
+
+                ENTRY --> AGENDA : startingDate
+                deactivate ENTRY
+
+                AGENDA -> AGENDA : checkDateWithinRange(startingDate, startDate, endDate)
+                activate AGENDA
+
+                AGENDA --> AGENDA
+                deactivate AGENDA
+
+                AGENDA -> ENTRY : getTeamAssign()
+                activate ENTRY
+
+                ENTRY --> AGENDA : teamAssign
+                deactivate ENTRY
+
+                    loop For each collaborator in teamAssign
+
+                                    AGENDA -> user : getEmail()
+                                    activate user
+
+                                    user --> AGENDA : email
+                                    deactivate user
+
+                                    alt email == collaboratorEmail
+
+                                    AGENDA -> "tasksCollaborator\n:List<Entry>" : add(entry)
+
+                                    "tasksCollaborator\n:List<Entry>" --> AGENDA
+                                    deactivate "tasksCollaborator\n:List<Entry>"
+
+                                    end
+
+                                    end loop
+
+        end loop
+
+
+    end group
+
+    autonumber 10
+    <-- CTRL : taskCategory
+
+deactivate CTRL
+
+
+@enduml

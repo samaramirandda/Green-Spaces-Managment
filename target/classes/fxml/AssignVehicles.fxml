@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="pprog.ui.gui.AssignVehiclesGUI"
+            prefHeight="400" prefWidth="600">
+
+    <center>
+        <VBox spacing="10" alignment="center" style="-fx-padding: 0 50;">
+            <Label text="Assign Vehicle(s) To an Entry" style="-fx-font-size: 20px;" />
+            <TextField fx:id="entryField" promptText="Enter the number of the Entry"/>
+            <TextField fx:id="vehicleField" promptText="Enter the plate number of the Vehicle(s). SEPARATED BY A COMA!!"/>
+            <HBox spacing="10" alignment="center">
+                <Button text="Return" onAction="#handleReturnButtonAction"/>
+                <Button text="List of Entries" onAction="#loadEntries"/>
+                <Button text="List of Vehicles" onAction="#loadVehicles"/>
+                <Button text="Submit" onAction="#handleAssignVehicles"/>
+            </HBox>
+        </VBox>
+    </center>
+
+</BorderPane>
+

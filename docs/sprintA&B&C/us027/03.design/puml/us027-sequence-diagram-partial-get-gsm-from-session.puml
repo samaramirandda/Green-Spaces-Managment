@@ -1,0 +1,62 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+
+participant ":ListGreenSpacesByGSMController" as CTRL
+participant ":Repositories" as REP
+participant "repositories\n:Repositories" as REPS
+participant "authenticationRepository:\nAuthenticationRepository" as authentication
+participant "authenticationFacade:\nAuthFacade" as authFacade
+participant "user:\nUserSession" as user
+participant "gsmFromSession\n:GreenSpacesManager" as GREENSPACEMANAGER
+
+autonumber 3
+
+ -> CTRL : getGsmFromSession()
+autonumber 3.1
+activate CTRL
+    group Get GSM from session
+
+            CTRL -> REP : getInstance()
+            activate REP
+
+            REP --> CTRL: repositories
+            deactivate REP
+
+            CTRL -> REPS: getAuthenticationRepository()
+                        activate REPS
+
+                        REPS --> CTRL: authenticationRepository
+                        deactivate REPS
+
+                        CTRL -> authentication: getCurrentUserSession()
+                        activate authentication
+
+                        authentication --> CTRL: authenticationFacade
+                        deactivate authentication
+
+                        CTRL -> authFacade: getCurrentUserSession()
+                        activate authFacade
+
+                        authFacade --> CTRL: userSession
+                        deactivate authFacade
+
+                        CTRL -> user: getUserId()
+                        activate user
+
+                        user --> CTRL: email
+                        deactivate user
+
+                        CTRL -> GREENSPACEMANAGER** : create(email)
+
+    end
+    autonumber 4
+    <-- CTRL  : gsmFromSession
+deactivate CTRL
+
+@enduml
